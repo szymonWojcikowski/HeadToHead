@@ -328,9 +328,9 @@ for(var i = 0; i < uniques.length; i++) {
                 }
             
             //-------statystyki procentowe wyliczane po warunkach zliczających----
-                var frequency = competed/raceInfo.length;
-                var winsPct = winner/competed;
-                var podiumPct = podium/competed;
+                var frequency = competed/raceInfo.length*100;
+                var winsPct = winner/competed*100;
+                var podiumPct = podium/competed*100;
             
                 var fSumOfComp = function su(numOfParticipants) {
                    var sumOfComp = 0;
@@ -365,13 +365,13 @@ for(var i = 0; i < uniques.length; i++) {
               statsDisplay.innerHTML = 
                  st + "wystartował " + mid + competed + end +
                  st + "nie startował " + mid + absent + end +
-                 st + "frekwencja " + mid + frequency.toFixed(3)*100 + "%" + end +
+                 st + "frekwencja " + mid + frequency.toFixed(3) + "%" + end +
                  st + "pierwszy " + mid + winner + end +
                  st + "drugi " + mid + second + end +
                  st + "trzeci " + mid + third + end + 
                  st + "na podium " + mid + podium + end +
-                 st + "procent wygranych " + mid + winsPct.toFixed(3)*100 + "%" + end +
-                 st + "procent na podium " + mid + podiumPct.toFixed(3)*100 + "%" + end +
+                 st + "procent wygranych " + mid + winsPct.toFixed(3) + "%" + end +
+                 st + "procent na podium " + mid + podiumPct.toFixed(3) + "%" + end +
                  st + "dalsze miejsce " + mid + furtherPlaces + end + 
                  st + "rajd po rajdzie " + mid + miejsca + end +
                  st + "a startowało " + mid + numOfParticipants + end +
@@ -501,9 +501,9 @@ for(var i = 0; i < uniques.length; i++) {
                 }
             
             //-------statystyki procentowe wyliczane po warunkach zliczających----
-                var frequency = competed/raceInfo.length;
-                var winsPct = winner/competed;
-                var podiumPct = podium/competed;
+                var frequency = competed/raceInfo.length*100;
+                var winsPct = winner/competed*100;
+                var podiumPct = podium/competed*100;
             
                 var fSumOfComp = function su(numOfParticipants) {
                    var sumOfComp = 0;
@@ -530,19 +530,19 @@ for(var i = 0; i < uniques.length; i++) {
                 }
             
               var statsDisplay = document.getElementById("stats2");
-              var st = "<div class=\"row no-gutters\"><div class=\"col-sm-7\">";
-              var mid = "</div><div class=\"col-sm-5\">";
-              var end = "</div></div>";
+              const st = "<div class=\"row no-gutters\"><div class=\"col-sm-7\">";
+              const mid = "</div><div class=\"col-sm-5\">";
+              const end = "</div></div>";
               statsDisplay.innerHTML = 
                  st + "wystartował " + mid + competed + end +
                  st + "nie startował " + mid + absent + end +
-                 st + "frekwencja " + mid + frequency.toFixed(3)*100 + "%" + end +
+                 st + "frekwencja " + mid + frequency.toFixed(3) + "%" + end +
                  st + "pierwszy " + mid + winner + end +
                  st + "drugi " + mid + second + end +
                  st + "trzeci " + mid + third + end + 
                  st + "na podium " + mid + podium + end +
-                 st + "procent wygranych " + mid + winsPct.toFixed(3)*100 + "%" + end +
-                 st + "procent na podium " + mid + podiumPct.toFixed(3)*100 + "%" + end +
+                 st + "procent wygranych " + mid + winsPct.toFixed(3) + "%" + end +
+                 st + "procent na podium " + mid + podiumPct.toFixed(3) + "%" + end +
                  st + "dalsze miejsce " + mid + furtherPlaces + end + 
                  st + "rajd po rajdzie " + mid + miejsca + end +
                  st + "a startowało " + mid + numOfParticipants + end +
