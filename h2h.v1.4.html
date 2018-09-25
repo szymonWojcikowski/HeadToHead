@@ -42,7 +42,7 @@
        </div>
    </section>
     <section class="row">
-        <div class="col-sm-6 text-center bg-secondary" id="stats">
+        <div class="col-sm-6 text-center bg-secondary" id="stats1">
         </div>
         <div class="col-sm-6 text-center bg-danger" id="stats2">
         </div>
@@ -63,9 +63,12 @@
 </div>
 <!------------------to Do------------------------------->
 <!--
-1) sorting of options in select abcd
+1) sorting of options in select abcd DONE
 2) languages
 3) avatars for truckers
+4) wywołanie f. showPosition z argumentem (nr rajdu), którego nie ma wysypuje kod (trzeba dodać obsługę błędów) DONE
+5) przerobienie wypisu statystk z użyciem template strings i poprawienie adresacji odkrywanego guzikiem pola #racebyrace
+- uzależnić od indexu
 -->
 
 <!----------------bootstrap4 i jego pomocnicy--------------->
@@ -459,9 +462,36 @@ var raceInfo = [
 }
 ];
 
+//-------------rozszerzenia prototypów tablic-----------------
+Array.prototype.contains = function(v) {
+    for(var i = 0; i < this.length; i++) {
+        if(this[i] === v) return true;
+    }
+    return false;
+};
+
+Array.prototype.unique = function() {
+    var arr = [];
+    for(var i = 0; i < this.length; i++) {
+        if(!arr.contains(this[i])) {
+            arr.push(this[i]);
+        }
+    }
+    return arr;
+};
+
+//-------------rozszerzenia prototypów-------------------------
+//polyfill dla przeglądarek nie obsługujących closest
+if (!Element.prototype.remove) {
+    Element.prototype.remove = function() {
+        this.parentElement.removeChild(this);
+    }
+}
+
+//=============diagnostyka danych z rajdami===================
 function dataCheck() {
-    var nrOfCorrectRaces = 0;
-    for (i = 0; i < raceInfo.length; i++) {
+    let nrOfCorrectRaces = 0;
+    for (let i = 0; i < raceInfo.length; i++) {
 
         if (raceInfo[i].competitors.length === raceInfo[i].position.length) {
             nrOfCorrectRaces++;
@@ -472,123 +502,110 @@ function dataCheck() {
     }
     console.log("--------------------\n" + nrOfCorrectRaces + " poprawnych rajdów\n" + "--------------------");
 }
+
 dataCheck();
 
- var drawResults = function(rYear, rRace, rPosition, rCompetitor, j) {
-   var j = j;
-   var rPosition = raceInfo[i].position[j];
-   var rCompetitor = raceInfo[i].competitors[j];
 
-   if (rPosition != undefined) {
+
+//---------deklaracja funkcji odpowiedzialnej za wyświetlanie wyników w konsoli
+const drawResults = function(rYear, rRace, rPosition, rCompetitor) {
+   if (rPosition !== undefined) {
         console.info(rPosition + " miejsce: " + rCompetitor);
    }
- }
-   
-     var testCounter = 1;
-     
-     var test = function() {
-         console.log("Test nr: " + testCounter);
-         testCounter++;
-     }
+};
+
 
 //---------tablica zbierająca z każdego rajdu liczbę uczestników ---------
-     var howMany = [];  
+let howMany = [];
     
-     raceInfo.forEach((el) => {
-         howMany.push(el.position.length);
-         // console.log("Startowało: " + el.position.length);
-         console.log(el.year + "#" + el.race + " startowało: " + el.position.length);
-     });
+raceInfo.forEach((el) => {
+    howMany.push(el.position.length);
+    console.log(el.year + "#" + el.race + " startowało: " + el.position.length);
+});
 
 //---------sprawdzamy maksymalną liczbę uczestników------------------------
-     var mostCompetitors = Math.max(...howMany);
-     console.info("Max: " + mostCompetitors);
-     console.log("----------------------");
-   
+const mostCompetitors = Math.max(...howMany);
+console.info("%cRekordowa liczba uczestników: " + mostCompetitors, "font-weight: 700;");
+
 
 //----------pętle wywołujące funkcję wyświetlającą wyniki w konsoli---------   
-     for (var i = 0; i < raceInfo.length; i++) {
-        console.info(raceInfo[i].year + " race#" + raceInfo[i].race);
-        for (var j = 0; j < mostCompetitors; j++) {
-            drawResults(raceInfo[i].year, raceInfo[i].race, raceInfo[i].position, raceInfo[i].competitors, j);
-        } 
-        console.log("-------------");
-      }
-   
-   
-   var showPosition = function(raceNr, who) {
-       var idWho = raceInfo[raceNr].competitors.indexOf(who);
-       var raceNumber = 1 + parseInt(raceNr);
-       var whoPosition = raceInfo[raceNr].position[idWho];
-       console.log(who + " na rajdzie " + raceNumber + " był " + whoPosition);
-   }
-   
-   
-   // wartości testowe wyrażenia funkcyjnego showPosition
-   showPosition("0", "Smyk");
-   showPosition("1", "Smyk");
-   //showPosition("5", "Smyk"); <--wywołanie rajdu którego nie ma wysypuje kod (trzeba dodać obsługę błędów)
-    showPosition("4", "abc"); // wywołanie zawodnika, który nie istniał daje undefined i kod wykonuje się dalej
+const drawingResultsLoops = function () {
+    for (let i = 0; i < raceInfo.length; i++) {
+        console.log("%c" + raceInfo[i].year + " race#" + raceInfo[i].race, "font-size: 14px;");
 
-    
+        for (let j = 0; j < mostCompetitors; j++) {
+            drawResults(raceInfo[i].year, raceInfo[i].race, raceInfo[i].position[j], raceInfo[i].competitors[j]);
+        }
+        console.log("----------------");
+    }
+};
+
+drawingResultsLoops();
+   
+   
+const showPosition = function(raceNr, who) {
+    if (raceNr < raceInfo.length) {
+        let idWho = raceInfo[raceNr].competitors.indexOf(who);
+        let raceNumber = 1 + parseInt(raceNr);
+        let whoPosition = raceInfo[raceNr].position[idWho];
+        if (whoPosition === undefined) {
+            console.log(who + " w tym rajdzie nie startował.");
+        }
+        else {
+            console.log(who + " na rajdzie " + raceNumber + " był " + whoPosition);
+        }
+    }
+    else {
+        console.log("Tego rajdu jeszcze nie było.");
+    }
+};
+
 //------------tworzymy tablicę ze wszystkich pojedyńczych występów na rajdzie-------------------
    
-var competitorsToSelect = [];
-for (var i = 0; i < raceInfo.length; i++) {
+let competitorsToSelect = [];
+for (let i = 0; i < raceInfo.length; i++) {
   competitorsToSelect = competitorsToSelect.concat(raceInfo[i].competitors);
   console.info("pętla nr " + i + ", dodani uczestnicy " + raceInfo[i].competitors);
 }
 console.info("competitorsToSelect " + competitorsToSelect);
   
-//---------------pozostawienie unikatów, skreślenie duplikatów z tablicy competitorsToSelect----------------------
-   
-Array.prototype.contains = function(v) {
-  for(var i = 0; i < this.length; i++) {
-    if(this[i] === v) return true;
-  }
-  return false;
-};
-     
-Array.prototype.unique = function() {
-  var arr = [];
-  for(var i = 0; i < this.length; i++) {
-    if(!arr.contains(this[i])) {
-      arr.push(this[i]);
-    }
-}
-  return arr.sort();
-};
+//-------pozostawienie unikatów z tablicy competitorsToSelect za pomocą roszerzeń prototypu tablic, posortowanie----------------------
 
-var uniques = competitorsToSelect.unique(); 
+const uniques = competitorsToSelect.unique().sort();
      
 console.log("Zawodnicy do wyboru: " + uniques + " Jest " + uniques.length + " zawodników do wyboru.");
    
      
-// source MDN
-for(var i = 0; i < uniques.length; i++) {
-  function addElement(i) {
-    var mySelect = null;
-    var newElOption = null;
-    newElOption = document.createElement("option");
-    newElOption.innerHTML = uniques[i];
-    mySelect = document.getElementById("firstSelect");
-    mySelect.appendChild(newElOption);
-  }
-  addElement(i);
+function addingSelects() {
+    for(let i = 0; i < uniques.length; i++) {
+        function addElement(i) {
+            let mySelect = null;
+            let newElOption = null;
+            newElOption = document.createElement("option");
+            newElOption.innerHTML = uniques[i];
+            mySelect = document.getElementById("firstSelect");
+            mySelect.appendChild(newElOption);
+        }
+        addElement(i);
+    }
 }
+addingSelects();
+
 
 
 /*------------funkcja do wyświetlania statystyk pierwszego zawodnika i... generująca opcje wyboru do drugiego selecta (warto wydzielić)---------*/
-    var showSelectedTruckerAndDisplayStats = function showSelectedTruckerAndDisplayStats() {
+    var showSelectedTruckerAndDisplayStats = function showSelectedTruckerAndDisplayStats(context, indexOfSelect) {
           console.log("startuejmy");
-          var select = document.getElementById("firstSelect");
-          var selectedOption = select.options[select.selectedIndex];
-          var selectedText   = selectedOption.text;  // 'dane'
-          var selectedValue  = selectedOption.value; // 'wartość'
+          let who = context.options[context.selectedIndex].value;
+          //var select = document.getElementById("firstSelect");
+          let select = context;
+          let selectedOption = select.options[select.selectedIndex];
+          const selectedText   = selectedOption.text;  // 'dane'
+          const selectedValue  = selectedOption.value; // 'wartość'
       
-          var showSelect = function showSelect() {
+          const showSelect = function showSelect() {
                console.log("Wybrano zawodnika " + selectedText);
-          }
+          };
           showSelect();
       
               //------statsDisplay---------
@@ -675,7 +692,7 @@ for(var i = 0; i < uniques.length; i++) {
                     }
                   console.error("Czy poza petlą jest co przekazać? " + sumOfComp);
                   return sumOfComp; 
-                }
+                };
             
                 var fSumOfPos = function suma(miejsca) {
                     var sumOfPos = 0;
@@ -684,16 +701,17 @@ for(var i = 0; i < uniques.length; i++) {
                       console.error("Test funkcji suma " + sumOfPos + " wsad: " + miejsca);
                     }
                     return sumOfPos; 
-                }
+                };
 
 
                 var per = function per(fSumOfPos, fSumOfComp) {
                     var positionPerNumOfCompetitors = fSumOfPos(miejsca)/fSumOfComp(numOfParticipants);
                     return positionPerNumOfCompetitors;
-                }
+                };
 
-            
-              var statsDisplay = document.getElementById("stats");
+              let indexOfStatsContainer = 1 + indexOfSelect;
+              let nameOfStatsContainer = "stats" + indexOfStatsContainer;
+              var statsDisplay = document.getElementById(nameOfStatsContainer);
               const st = "<div class=\"row no-gutters\"><div class=\"col-sm-7\">";
               const mid = "</div><div class=\"col-sm-5\">";
               const end = "</div></div>";
@@ -712,209 +730,280 @@ for(var i = 0; i < uniques.length; i++) {
                  st + "pozycja na liczbę startujących " + mid + per(fSumOfPos, fSumOfComp).toFixed(3) + end +
 //                 st + "rajd po rajdzie (miejsce/liczba startujących" + mid + end + "<div>" + miejsca + "/" + numOfParticipants + "</div>"; 
                   "<div class=\"row no-gutters\"><div class=\"col-sm-9\">" + "rajd po rajdzie (miejsce/liczba startujących)" + "</div>" + "<div class=\"col-sm-3\"><button class=\"btn btn-secondary btn-sm\" type=\"button\" data-toggle=\"collapse\" data-target=\"#race-by-race\" aria-expanded=\"false\" aria-controls=\"race-by-race\">Show/hide</button></div>" + "<div class=\"collapse\" id=\"race-by-race\">" + posPerContestants + "</div>";
-          }
+          };
 
           showMeStats(raceInfo);
         
-          function truckersToCompare() {
-            var select = document.getElementById("firstSelect");
-            var selectedOption = select.options[select.selectedIndex];
-            var selectedText = selectedOption.text;
-            var idOfSelected = uniques.indexOf(selectedText);
-            var avilableToCompare =[];
-            avilableToCompare = uniques.filter(function(el) {
-                return el != selectedOption.text;
-            });
-            console.log("możliwi do porównania " + avilableToCompare + " | " + avilableToCompare.length + " zaznaczone " + idOfSelected);
-              return avilableToCompare;
-          }
-           console.log("Sprawdzam możliwości porównania: " + truckersToCompare());
-        
-        
-        //polyfill dla przeglądarek nie obsługujących closest
-            if (!Element.prototype.remove) {
-                Element.prototype.remove = function() {
-                    this.parentElement.removeChild(this);
-                }
-            }
-        
-            var selectToClear = document.getElementById("selectoToCompare");
-            
-            while (selectToClear.firstChild) {
-                selectToClear.removeChild(selectToClear.firstChild);
-            }
-        //--------------pętla dodające option do selecta 
-            for(var i = 0; i < truckersToCompare().length; i++) {
-                function addEl(i) {
-                    var mySelect = null;
-                    var newElOption = null;
-                    newElOption = document.createElement("option");
-                    newElOption.innerHTML = truckersToCompare()[i];
+        //   function truckersToCompare() {
+        //     var select = document.getElementById("firstSelect");
+        //     var selectedOption = select.options[select.selectedIndex];
+        //     var selectedText = selectedOption.text;
+        //     var idOfSelected = uniques.indexOf(selectedText);
+        //     var avilableToCompare =[];
+        //     avilableToCompare = uniques.filter(function(el) {
+        //         return el != selectedOption.text;
+        //     });
+        //     console.log("możliwi do porównania " + avilableToCompare + " | " + avilableToCompare.length + " zaznaczone " + idOfSelected);
+        //       return avilableToCompare;
+        //   }
+        //    console.log("Sprawdzam możliwości porównania: " + truckersToCompare());
+        //
+        //
+        //
+        //
+        //     var selectToClear = document.getElementById("selectoToCompare");
+        //
+        //     while (selectToClear.firstChild) {
+        //         selectToClear.removeChild(selectToClear.firstChild);
+        //     }
+        // //--------------pętla dodające option do selecta
+        //     for(var i = 0; i < truckersToCompare().length; i++) {
+        //         function addEl(i) {
+        //             var mySelect = null;
+        //             var newElOption = null;
+        //             newElOption = document.createElement("option");
+        //             newElOption.innerHTML = truckersToCompare()[i];
+        //
+        //             mySelect = document.getElementById("selectoToCompare");
+        //             mySelect.removeChild
+        //             mySelect.appendChild(newElOption);
+        //         }
+        //         addEl(i);
+        //     }
+    };
 
-                    mySelect = document.getElementById("selectoToCompare");
-                    mySelect.removeChild
-                    mySelect.appendChild(newElOption);
-                }
-                addEl(i);
-            }
+
+
+//-----------------przygotowanie listy oponentów możliwych do porównania-----------
+function truckersToCompare() {
+    var select = document.getElementById("firstSelect");
+    var selectedOption = select.options[select.selectedIndex];
+    var selectedText = selectedOption.text;
+    var idOfSelected = uniques.indexOf(selectedText);
+    var avilableToCompare =[];
+    avilableToCompare = uniques.filter(function(el) {
+        return el != selectedOption.text;
+    });
+    //console.log("możliwi do porównania " + avilableToCompare + " | " + avilableToCompare.length + " zaznaczone " + idOfSelected);
+    return avilableToCompare;
+}
+console.log("Sprawdzam możliwości porównania: " + truckersToCompare());
+
+
+//-----------------dodanie optionow do drugiego selecta-----------
+function prepareSecondSelect() {
+    var selectToClear = document.getElementById("selectoToCompare");
+
+    while (selectToClear.firstChild) {
+        selectToClear.removeChild(selectToClear.firstChild);
     }
-   
+//--------------pętla dodające option do selecta
+    for(var i = 0; i < truckersToCompare().length; i++) {
+        function addEl(i) {
+            var mySelect = null;
+            var newElOption = null;
+            newElOption = document.createElement("option");
+            newElOption.innerHTML = truckersToCompare()[i];
+
+            mySelect = document.getElementById("selectoToCompare");
+            mySelect.removeChild
+            mySelect.appendChild(newElOption);
+        }
+        addEl(i);
+    }
+}
+
+
+
+
+
+
   /*---------- f pokazująca statystyki drugiego wybranego kierowcy --start-----*/  
-       var showSelectedTruckerAndDisplayStats2 = function showSelectedTruckerAndDisplayStats2() {
-          console.log("Test pokazywania statystyk drugiego zawodnika");
-          var select = document.getElementById("selectoToCompare");
-          var selectedOption = select.options[select.selectedIndex];
-          var selectedText   = selectedOption.text;  // 'dane'
-          var selectedValue  = selectedOption.value; // 'wartość'
-      
-          var showSelect = function showSelect() {
-               console.log("Wybrano zawodnika " + selectedText);
-          }
-          showSelect();
-      
-              //------statsDisplay---------
-          var showMeStats = function showMeStats(raceInfo) {
-               var raceInfo = raceInfo;
-               console.warn("Drugi wybrany zawodnik " + selectedText);
-               console.error("Czy przekazał rajdy? " + raceInfo);
-
-            //--------------pętla zliaczająca pozycje do statystyk----------
-                
-                var absent = 0;
-                var winner = 0;
-                var second = 0;
-                var third = 0;
-                var podium = 0;
-                var furtherPlaces = 0;
-                var competed = 0;
-                var frequency = 0;
-                var miejsca = [];
-                var numOfParticipants = [];
-                var posPerContestants = [];
-            
-                for (var i = 0; i < raceInfo.length; i++) {
-                  console.log("W pętli " + raceInfo[i].position);
-                  console.log(selectedText);
-                  var raceInfo = raceInfo;
-                  var i = i;
-                  var raceNr = i + 1;
-                  var chosenIndex = raceInfo[i].competitors.indexOf(selectedText);
-                  var positionToPush = raceInfo[i].position[chosenIndex];
-                  var numOfParticipantsToPush = raceInfo[i].position.length;
-                  
-                  if (positionToPush != undefined) {
-                      miejsca.push(positionToPush);
-                      numOfParticipants.push(numOfParticipantsToPush);
-                      
-                      posPerCont = "";
-                      posPerCont += " (Race " + raceNr + ": " + positionToPush + "/" + numOfParticipantsToPush + ")";
-                      posPerContestants.push(posPerCont);
-                  }
-                 // var selectedText = selectedText;
-                  if (raceInfo[i].position[chosenIndex] == 1) {
-                
-                    winner++;
-                    competed++;
-                    podium++;
-                  } 
-                  else if (raceInfo[i].position[chosenIndex] == 2) {
-                    second++;
-                    competed++;
-                    podium++;
-                  }
-                  else if (raceInfo[i].position[chosenIndex] == 3) {
-                    third++;
-                    competed++;
-                    podium++;
-                  }
-                  else if (raceInfo[i].position[chosenIndex] == undefined) {
-                    absent++;
-                  }
-                  else {
-                    console.log("Zawodnik " + selectedText);
-                    console.warn("Dalsze miejsce " + raceInfo[i].position[chosenIndex] + " na " + raceInfo[i].position.length);
-
-
-                    furtherPlaces++;
-                    competed++;
-                  }
-                }
-            
-            //-------statystyki procentowe wyliczane po warunkach zliczających----
-                var frequency = competed/raceInfo.length*100;
-                var winsPct = winner/competed*100;
-                var podiumPct = podium/competed*100;
-            
-                var fSumOfComp = function su(numOfParticipants) {
-                   var sumOfComp = 0;
-                    for(var i = 0; i < numOfParticipants.length; i++) { 
-                      sumOfComp = sumOfComp + parseInt(numOfParticipants[i]); 
-                      console.warn("wewnetrzny Test funkcji su " + sumOfComp);
-                    }
-                  console.error("Czy poza petlą jest co przekazać? " + sumOfComp);
-                  return sumOfComp; 
-                }
-            
-                var fSumOfPos = function suma(miejsca) {
-                    var sumOfPos = 0;
-                    for(var i = 0; i < miejsca.length; i++) { 
-                      sumOfPos = sumOfPos + parseInt(miejsca[i]); 
-                      console.error("Test funkcji suma " + sumOfPos + " wsad: " + miejsca);
-                    }
-                    return sumOfPos; 
-                }
-
-                var per = function per(fSumOfPos, fSumOfComp) {
-                    var positionPerNumOfCompetitors = fSumOfPos(miejsca)/fSumOfComp(numOfParticipants);
-                    return positionPerNumOfCompetitors;
-                }
-            
-              var statsDisplay = document.getElementById("stats2");
-              const st = "<div class=\"row no-gutters\"><div class=\"col-sm-7\">";
-              const mid = "</div><div class=\"col-sm-5\">";
-              const end = "</div></div>";
-              statsDisplay.innerHTML = 
-                 st + "wystartował " + mid + competed + end +
-                 st + "nie startował " + mid + absent + end +
-                 st + "frekwencja " + mid + frequency.toFixed(3) + "%" + end +
-                 st + "pierwszy " + mid + winner + end +
-                 st + "drugi " + mid + second + end +
-                 st + "trzeci " + mid + third + end + 
-                 st + "na podium " + mid + podium + end +
-                 st + "procent wygranych " + mid + winsPct.toFixed(3) + "%" + end +
-                 st + "procent na podium " + mid + podiumPct.toFixed(3) + "%" + end +
-                 st + "dalsze miejsce " + mid + furtherPlaces + end + 
-                 st + "pozycja na liczbę startujących " + mid + per(fSumOfPos, fSumOfComp).toFixed(3) + end +
-                  "<div class=\"row no-gutters\"><div class=\"col-sm-9\">" + "rajd po rajdzie (miejsce/liczba startujących)" + "</div>" + "<div class=\"col-sm-3\"><button class=\"btn btn-danger btn-sm\" type=\"button\" data-toggle=\"collapse\" data-target=\"#race-by-race2\" aria-expanded=\"false\" aria-controls=\"race-by-race2\">Show/hide</button></div>" + "<div class=\"collapse\" id=\"race-by-race2\">" + posPerContestants + "</div>";
-          }
-          showMeStats(raceInfo);
-      } 
+      //  var showSelectedTruckerAndDisplayStats2 = function showSelectedTruckerAndDisplayStats2() {
+      //     console.log("Test pokazywania statystyk drugiego zawodnika");
+      //     var select = document.getElementById("selectoToCompare");
+      //     var selectedOption = select.options[select.selectedIndex];
+      //     var selectedText   = selectedOption.text;  // 'dane'
+      //     var selectedValue  = selectedOption.value; // 'wartość'
+      //
+      //     var showSelect = function showSelect() {
+      //          console.log("Wybrano zawodnika " + selectedText);
+      //     }
+      //     showSelect();
+      //
+      //         //------statsDisplay---------
+      //     var showMeStats = function showMeStats(raceInfo) {
+      //          var raceInfo = raceInfo;
+      //          console.warn("Drugi wybrany zawodnik " + selectedText);
+      //          console.error("Czy przekazał rajdy? " + raceInfo);
+      //
+      //       //--------------pętla zliaczająca pozycje do statystyk----------
+      //
+      //           var absent = 0;
+      //           var winner = 0;
+      //           var second = 0;
+      //           var third = 0;
+      //           var podium = 0;
+      //           var furtherPlaces = 0;
+      //           var competed = 0;
+      //           var frequency = 0;
+      //           var miejsca = [];
+      //           var numOfParticipants = [];
+      //           var posPerContestants = [];
+      //
+      //           for (var i = 0; i < raceInfo.length; i++) {
+      //             console.log("W pętli " + raceInfo[i].position);
+      //             console.log(selectedText);
+      //             var raceInfo = raceInfo;
+      //             var i = i;
+      //             var raceNr = i + 1;
+      //             var chosenIndex = raceInfo[i].competitors.indexOf(selectedText);
+      //             var positionToPush = raceInfo[i].position[chosenIndex];
+      //             var numOfParticipantsToPush = raceInfo[i].position.length;
+      //
+      //             if (positionToPush != undefined) {
+      //                 miejsca.push(positionToPush);
+      //                 numOfParticipants.push(numOfParticipantsToPush);
+      //
+      //                 posPerCont = "";
+      //                 posPerCont += " (Race " + raceNr + ": " + positionToPush + "/" + numOfParticipantsToPush + ")";
+      //                 posPerContestants.push(posPerCont);
+      //             }
+      //            // var selectedText = selectedText;
+      //             if (raceInfo[i].position[chosenIndex] == 1) {
+      //
+      //               winner++;
+      //               competed++;
+      //               podium++;
+      //             }
+      //             else if (raceInfo[i].position[chosenIndex] == 2) {
+      //               second++;
+      //               competed++;
+      //               podium++;
+      //             }
+      //             else if (raceInfo[i].position[chosenIndex] == 3) {
+      //               third++;
+      //               competed++;
+      //               podium++;
+      //             }
+      //             else if (raceInfo[i].position[chosenIndex] == undefined) {
+      //               absent++;
+      //             }
+      //             else {
+      //               console.log("Zawodnik " + selectedText);
+      //               console.warn("Dalsze miejsce " + raceInfo[i].position[chosenIndex] + " na " + raceInfo[i].position.length);
+      //
+      //
+      //               furtherPlaces++;
+      //               competed++;
+      //             }
+      //           }
+      //
+      //       //-------statystyki procentowe wyliczane po warunkach zliczających----
+      //           var frequency = competed/raceInfo.length*100;
+      //           var winsPct = winner/competed*100;
+      //           var podiumPct = podium/competed*100;
+      //
+      //           var fSumOfComp = function su(numOfParticipants) {
+      //              var sumOfComp = 0;
+      //               for(var i = 0; i < numOfParticipants.length; i++) {
+      //                 sumOfComp = sumOfComp + parseInt(numOfParticipants[i]);
+      //                 console.warn("wewnetrzny Test funkcji su " + sumOfComp);
+      //               }
+      //             console.error("Czy poza petlą jest co przekazać? " + sumOfComp);
+      //             return sumOfComp;
+      //           }
+      //
+      //           var fSumOfPos = function suma(miejsca) {
+      //               var sumOfPos = 0;
+      //               for(var i = 0; i < miejsca.length; i++) {
+      //                 sumOfPos = sumOfPos + parseInt(miejsca[i]);
+      //                 console.error("Test funkcji suma " + sumOfPos + " wsad: " + miejsca);
+      //               }
+      //               return sumOfPos;
+      //           }
+      //
+      //           var per = function per(fSumOfPos, fSumOfComp) {
+      //               var positionPerNumOfCompetitors = fSumOfPos(miejsca)/fSumOfComp(numOfParticipants);
+      //               return positionPerNumOfCompetitors;
+      //           }
+      //
+      //         var statsDisplay = document.getElementById("stats2");
+      //         const st = "<div class=\"row no-gutters\"><div class=\"col-sm-7\">";
+      //         const mid = "</div><div class=\"col-sm-5\">";
+      //         const end = "</div></div>";
+      //         statsDisplay.innerHTML =
+      //            st + "wystartował " + mid + competed + end +
+      //            st + "nie startował " + mid + absent + end +
+      //            st + "frekwencja " + mid + frequency.toFixed(3) + "%" + end +
+      //            st + "pierwszy " + mid + winner + end +
+      //            st + "drugi " + mid + second + end +
+      //            st + "trzeci " + mid + third + end +
+      //            st + "na podium " + mid + podium + end +
+      //            st + "procent wygranych " + mid + winsPct.toFixed(3) + "%" + end +
+      //            st + "procent na podium " + mid + podiumPct.toFixed(3) + "%" + end +
+      //            st + "dalsze miejsce " + mid + furtherPlaces + end +
+      //            st + "pozycja na liczbę startujących " + mid + per(fSumOfPos, fSumOfComp).toFixed(3) + end +
+      //             "<div class=\"row no-gutters\"><div class=\"col-sm-9\">" + "rajd po rajdzie (miejsce/liczba startujących)" + "</div>" + "<div class=\"col-sm-3\"><button class=\"btn btn-danger btn-sm\" type=\"button\" data-toggle=\"collapse\" data-target=\"#race-by-race2\" aria-expanded=\"false\" aria-controls=\"race-by-race2\">Show/hide</button></div>" + "<div class=\"collapse\" id=\"race-by-race2\">" + posPerContestants + "</div>";
+      //     }
+      //     showMeStats(raceInfo);
+      // }
    
+
+
+      const clearingComparison = function () {
+          const compareContainer = document.getElementById("comparison");
+          compareContainer.innerHTML = "";
+      };
+
 
      //-----------z kursu o formularzach: http://kursjs.pl/kurs/formularze/formularze.php----
-     const selectA = document.getElementById("firstSelect");
-
-     selectA.addEventListener("change", function() {
-         var who1 = this.options[this.selectedIndex].value;
-         console.error('Wybrałeś: ' + this.options[this.selectedIndex].value);
-
-         showSelectedTruckerAndDisplayStats(who1);
-         var compareDisplay = document.getElementById("comparison");
-         compareDisplay.innerHTML = "";
-     });
+    //  const selectA = document.getElementById("firstSelect");
+    //
+    //  selectA.addEventListener("change", function() {
+    //      var who1 = this.options[this.selectedIndex].value;
+    //      console.error('Wybrałeś: ' + this.options[this.selectedIndex].value);
+    //
+    //      showSelectedTruckerAndDisplayStats(who1);
+    //
+    //      clearingComparison();
+    //  });
+    //
+    //
+    // const selectB = document.getElementById("selectoToCompare");
+    //
+    //  selectB.addEventListener("change", function() {
+    //      var who2 = this.options[this.selectedIndex].value;
+    //      console.error('Wybrałeś: ' + this.options[this.selectedIndex].value);
+    //      showSelectedTruckerAndDisplayStats2(who2);
+    //
+    //      clearingComparison();
+    //
+    //      console.log(this);
+    //      if (this.id === "selectoToCompare") {
+    //          console.log("trzeba wywołać dodatkową funkcję do stworzenia listy oponentów");
+    //      }
+    //  });
      
-     
-    const selectB = document.getElementById("selectoToCompare");
+const selects = document.getElementsByTagName("select");
 
-     selectB.addEventListener("change", function() {
-         var who2 = this.options[this.selectedIndex].value;
-         console.error('Wybrałeś: ' + this.options[this.selectedIndex].value);
-         showSelectedTruckerAndDisplayStats2(who2);
-         var compareDisplay = document.getElementById("comparison");
-         compareDisplay.innerHTML = "";
-     });
-     
+for (let i = 0; i < selects.length; i++) {
+    selects[i].addEventListener("change", function() {
+        //let who = this.options[this.selectedIndex].value;
 
+        let context = this;
+        console.error('Wybrałeś: ' + this.options[this.selectedIndex].value);
+        showSelectedTruckerAndDisplayStats(context, i);
+
+        clearingComparison();
+
+        console.log(this);
+        if (this.id === "firstSelect") {
+            console.log("trzeba wywołać dodatkową funkcję do stworzenia listy oponentów");
+            prepareSecondSelect();
+        }
+    });
+}
    
 /* funkcja do porównywania wyników zawodników - wymaga sprawdzenia-------------------*/
     var vs = function() {
@@ -938,11 +1027,24 @@ for(var i = 0; i < uniques.length; i++) {
             var who1Pos = raceInfo[i].position[who1Id];//pozycja z tabeli wzięta po odpowiadającym indexie z tabeli uczestników
             var who2Pos = raceInfo[i].position[who2Id];//jw
             var raceCounter = i + 1;
-            console.group();
-              console.warn(who1 + " vs " + who2);
-              console.log("Race#" + raceCounter + " (" + raceInfo[i].year + " #" + raceInfo[i].race + ")");
-              console.log(who1 + " był " + raceInfo[i].position[who1Id], "a " + who2 + " był " + raceInfo[i].position[who2Id]);
-            console.groupEnd();
+
+            if (raceInfo[i].position[who1Id] !== undefined || raceInfo[i].position[who2Id] !== undefined) {
+                console.group();
+                console.warn(who1 + " vs " + who2);
+                console.log("Race#" + raceCounter + " (" + raceInfo[i].year + " #" + raceInfo[i].race + ")");
+                if (raceInfo[i].position[who1Id] === undefined) {
+                    console.log(who1 + " nie startował, a " + who2 + " był " + raceInfo[i].position[who2Id]);
+                }
+                else if (raceInfo[i].position[who2Id] === undefined) {
+                    console.log(who1 + " był " + raceInfo[i].position[who1Id] + ", a " + who2 + " nie startował.");
+                }
+                else {
+                    console.log(who1 + " był " + raceInfo[i].position[who1Id] + ", a " + who2 + " był " + raceInfo[i].position[who2Id]);
+                }
+                console.groupEnd();
+            }
+
+
             if (who1Pos && who2Pos !== undefined) {
                 if (who1Pos < who2Pos) {
                     who1Score++;
