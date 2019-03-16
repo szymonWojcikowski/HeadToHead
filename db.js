@@ -1,5 +1,4 @@
-{
-  "raceInfo": [
+const raceInfo = [
   {
     "series": "GPM",
     "year": 2007,
@@ -482,5 +481,4 @@
       "competitors": ["Atros", "Omen", "Emilus", "BJ", "William"],
       "position": ["1", "1", "3", "5", "5"]
     }
-  ]
-}
+  ];
