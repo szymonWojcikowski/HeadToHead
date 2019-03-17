@@ -257,6 +257,8 @@ const showSelectedTruckerAndDisplayStats = function showSelectedTruckerAndDispla
                 let miejsca = [];
                 let numOfParticipants = [];
                 let posPerContestants = [];
+                let winsAgainstOthersTab = [];
+                let winsTabLength = winsAgainstOthersTab.length;
               
 
                 for (let i = 0; i < raceInfo.length; i++) {
@@ -268,6 +270,8 @@ const showSelectedTruckerAndDisplayStats = function showSelectedTruckerAndDispla
                   let chosenIndex = raceInfo[i].competitors.indexOf(selectedText);
                   let positionToPush = raceInfo[i].position[chosenIndex];
                   let numOfParticipantsToPush = raceInfo[i].position.length;
+                  let winsAgainstOthersRate = (numOfParticipantsToPush - positionToPush)/(numOfParticipantsToPush - 1);
+                  winsTabLength = winsAgainstOthersTab.length;
                   
                   if (positionToPush != undefined) {
                       miejsca.push(positionToPush);
@@ -276,6 +280,8 @@ const showSelectedTruckerAndDisplayStats = function showSelectedTruckerAndDispla
                       posPerCont = "";
                       posPerCont += " (Race " + raceNr + ": " + positionToPush + "/" + numOfParticipantsToPush + ")";
                       posPerContestants.push(posPerCont);
+                    //   ======
+                      winsAgainstOthersTab.push(winsAgainstOthersRate);
                   }
 
                   if (raceInfo[i].position[chosenIndex] == 1) {
@@ -345,6 +351,15 @@ const showSelectedTruckerAndDisplayStats = function showSelectedTruckerAndDispla
                     }
                 };
 
+                let winsRate = function(winsAgainstOthersTab, winsTabLength) {
+                    let winsRateSum  = winsAgainstOthersTab.reduce( (prev, cur) => {
+                        console.log("WINS RATE------------------", winsAgainstOthersTab, winsTabLength)
+                        return prev + cur;
+                    });
+                    return winsRateSum / winsTabLength;
+                }
+
+
               let indexOfStatsContainer = 1 + indexOfSelect;
               let nameOfStatsContainer = "stats" + indexOfStatsContainer;
               let raceContainerNr = "race-by-race" + indexOfStatsContainer;  
@@ -353,13 +368,20 @@ const showSelectedTruckerAndDisplayStats = function showSelectedTruckerAndDispla
               const st = "<div class=\"row no-gutters\"><div class=\"col-sm-7\">";
               const mid = "</div><div class=\"col-sm-5\">";
               const end = "</div></div>";
-              const chart = `<svg viewBox="0 0 360 36" class="circular-chart">
-                                <path class="circle" stroke-dasharray="${per(fSumOfPos, fSumOfComp).toFixed(3)*100}, 100" d="M18 2.0845
-                                    a 15.9155 15.9155 0 0 1 0 31.831
-                                    a 15.9155 15.9155 0 0 1 0 -31.831"></path>
-                            </svg>`;
+            //   const chart = `<svg width="1.2rem" height="1.2rem" viewBox="0 0 36 36" class="circular-chart">
+            //                     <path class="circle" stroke-dasharray="${winsRate(winsAgainstOthersTab, winsTabLength).toFixed(3)*100}, 100" d="M18 2.0845
+            //                         a 15.9155 15.9155 0 0 1 0 31.831
+            //                         a 15.9155 15.9155 0 0 1 0 -31.831"></path>
+            //                 </svg>`;
+
+            const chart = 
+                `<svg viewBox="0 0 64 64" class="pie">
+                    <circle r="25%" cx="50%" cy="50%" style="stroke-dasharray: ${winsRate(winsAgainstOthersTab, winsTabLength).toFixed(3)*100}, 100; stroke-dashoffset: 0; animation-delay: .2s">
+                    </circle>
+                </svg>`;
 
             //   ${st} nie startował ${mid} ${absent} ${end}  
+            //   ${st} pozycja na liczbę startujących ${mid} <span>${per(fSumOfPos, fSumOfComp).toFixed(3)}</span> ${chart}${end}
               
         statsDisplay.innerHTML = 
             `${st} wystartował ${mid} ${competed} x&#127937;${end}
@@ -371,7 +393,7 @@ const showSelectedTruckerAndDisplayStats = function showSelectedTruckerAndDispla
             ${st} procent wygranych ${mid} ${winsPct.toFixed(3)} % ${end}
             ${st} procent na podium ${mid} ${podiumPct.toFixed(3)} % ${end}
             ${st} dalsze miejsce ${mid} ${furtherPlaces} ${end} 
-            ${st} pozycja na liczbę startujących ${mid} <span>${per(fSumOfPos, fSumOfComp).toFixed(3)}</span> ${chart}${end}
+            ${st} % wygranych przeciwko innym startującym ${mid} ${winsRate(winsAgainstOthersTab, winsTabLength).toFixed(3)} ${chart}${end} 
             <div class=\"row no-gutters\"><div class=\"col-sm-9\">rajd po rajdzie (miejsce/liczba startujących)</div>
             <div class=\"col-sm-3\"><button class=\"btn btn-secondary btn-sm\" type=\"button\" data-toggle=\"collapse\" data-target=\"#${raceContainerNr}\" aria-expanded=\"false\" aria-controls=\"${raceContainerNr}\">Show/hide</button></div>
             <div class=\"collapse\" id=\"${raceContainerNr}\"> ${posPerContestants}</div>`;
