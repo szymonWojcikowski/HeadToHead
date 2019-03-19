@@ -1,85 +1,15 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>H2H App v. 0</title>
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
-  <link rel="stylesheet" href="style.css">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-</head>
-<body>
-<div class="container">
-   <header class="row">
-     <div class="col-md-12">
-       <h1 class="text-center text-secondary">Head 2 Head</h1>
-       <h2 class="text-center text-warning">Lego truckers's comparison</h2>
-       <div class="alert alert-warning alert-dismissible" role="alert">
-          <code><strong>How to:</strong> Select a first trucker. U will see his stats (total number of races, number of wins, second, and third places, percentage of wins). Now choose his oponent. You will see his stats also. Now click "compare" button. You will see a results of direct duels (such total namber of wins, loss and draws, percentage of direct wins).</code> 
-          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-       
-     </div>
-   </header>
-   <section class="row">
-       <div class="col-sm-6 bg-secondary card-body">
-           <div class="form-group">
-              <label for="firstSelect" class="text-white">Select a trucker</label>
-              <select class="form-control" id="firstSelect">
-<!--options generated via js -->
-              </select>
-            </div>
-       </div>
-       
-       <div class="col-sm-6 bg-danger card-body">
-          <div class="form-group">
-            <label for="selectToCompare" class="text-light">...and choose his contestant</label>
-            <select class="form-control" id="selectToCompare">
-<!--options generated via js -->
-            </select>
-          </div>
-       </div>
-   </section>
-    <section class="row">
-        <div class="col-sm-6 text-center bg-secondary" id="stats1">
-        </div>
-        <div class="col-sm-6 text-center bg-danger" id="stats2">
-        </div>
- 
-    </section>
-    <section class="row">  
-        <div class="col-sm-12 text-center" id="comparison">
-        </div>
-    </section>
-   <section class="row">
-        <div class="col-sm-12 card-body text-center">
-         <button type="button" class="btn btn-lg btn-success" id="compareBtn">Compare</button>
-      </div>
-   </section>
-   
+import './style.scss';
 
-   
-</div>
-<!------------------to Do------------------------------->
-<!--
-1) sorting of options in select abcd DONE
-2) languages
-3) avatars for truckers
-4) wywołanie f. showPosition z argumentem (nr rajdu), którego nie ma wysypuje kod (trzeba dodać obsługę błędów) DONE
-5) przerobienie wypisu statystk z użyciem template strings i poprawienie adresacji odkrywanego guzikiem pola #racebyrace
-- uzależnić od indexu
--->
+// <!------------------to Do------------------------------->
+// <!--
+// 1) sorting of options in select abcd DONE
+// 2) languages
+// 3) avatars for truckers
+// 4) wywołanie f. showPosition z argumentem (nr rajdu), którego nie ma wysypuje kod (trzeba dodać obsługę błędów) DONE
+// 5) przerobienie wypisu statystk z użyciem template strings i poprawienie adresacji odkrywanego guzikiem pola #racebyrace
+// - uzależnić od indexu
+// -->
 
-<!----------------bootstrap4 i jego pomocnicy--------------->
- <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
-
-<script type="text/javascript" src="db.js"></script> 
-<!-- pobranie danych (do zrobienia w ładny sposób) -->
-
- <script>
 //-------------rozszerzenia prototypów tablic-----------------
 Array.prototype.contains = function(v) {
     for(let i = 0; i < this.length; i++) {
@@ -277,7 +207,7 @@ const showSelectedTruckerAndDisplayStats = function showSelectedTruckerAndDispla
                       miejsca.push(positionToPush);
                       numOfParticipants.push(numOfParticipantsToPush);
                       /*--new--*/
-                      posPerCont = "";
+                      let posPerCont = "";
                       posPerCont += " (Race " + raceNr + ": " + positionToPush + "/" + numOfParticipantsToPush + ")";
                       posPerContestants.push(posPerCont);
                     //   ======
@@ -537,7 +467,3 @@ const vs = function() {
    
 const compareBtn = document.getElementById("compareBtn");
 compareBtn.addEventListener("click", vs, false); 
-    
-  </script>
- </body>
-</html>  

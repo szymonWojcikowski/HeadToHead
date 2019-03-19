@@ -1,0 +1,30 @@
+.pie {
+    position: absolute;
+    margin-left: .3rem;
+    transform: rotate(180deg);
+    width: 1.2rem;
+    line-height: 1.2rem;
+    background: #b7afaf;
+    border-radius: 50%;
+    circle {
+        fill: none;
+        stroke: gold;
+        stroke-width: 32;
+        animation: rotate 1.5s ease-in;
+    }
+}
+  
+
+@keyframes rotate {
+    0% {
+      stroke-dasharray: 0 100;
+    }
+}
+
+#stats1 {
+    color: #FFF;
+}
+
+#stats2 {
+    color: rgb(3, 3, 51);
+}

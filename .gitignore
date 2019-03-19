@@ -3,4 +3,5 @@
 .idea/
 toDo.txt
 /archive
+/node_modules
 selecty.js
