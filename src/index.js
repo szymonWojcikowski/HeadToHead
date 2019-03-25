@@ -435,6 +435,7 @@ xhttp.onreadystatechange = function() {
                     positionPoint1.setAttribute("stroke-innerWidth", "5");
                     positionPoint1.setAttribute("data-position", who1Pos);
                     positionPoint1.setAttribute("data-race", i + 1);
+                    positionPoint1.setAttribute("data-who", who1);
                     positionPoint1.classList.add("chart-point-a");
                 }
 
@@ -446,6 +447,10 @@ xhttp.onreadystatechange = function() {
                     positionPoint2.setAttribute("stroke", "transparent");
                     positionPoint2.setAttribute("fill", "blue");
                     positionPoint2.setAttribute("stroke-innerWidth", "");
+                    positionPoint2.setAttribute("data-position", who2Pos);
+                    positionPoint2.setAttribute("data-race", i + 1);
+                    // console.log(who2);
+                    positionPoint2.setAttribute("data-who", who2);
                     positionPoint2.classList.add("chart-point-b");
                 }
 
@@ -520,7 +525,7 @@ xhttp.onreadystatechange = function() {
             //     <polyline class="chart-line-a" points="${chartPoints1}" />
             //     <polyline class="chart-line-b" points="${chartPoints2}" />
             // `;
-            chartWrapper.appendChild(chartBg);
+            
 
             console.log("---< Wynik H2H >---");
             console.info(who1 + " był wyżej " + who1Score);
@@ -535,9 +540,26 @@ xhttp.onreadystatechange = function() {
                     ${who2} wygrał ${who2Score} <br>
                     remis był: ${draw} </section></div>`;
             compareDisplay.insertBefore(h2hStat, compareDisplay.firstChild);
-            };
+
         
-        
+            chartWrapper.appendChild(chartBg); // wstawiamy wykres po sekcji porównywania
+
+            let circles = document.querySelectorAll("circle");
+            console.log(circles);
+            // circles.map( item => {
+            //         (function() {item.addEventListener("mouseover", function(e) {
+            //             console.log("mouseover", e.target);
+            //             console.log(this);
+            //         }, false)})();
+            // });
+            for(let i = 0; i < circles.length; i++) {
+                circles[i].addEventListener("mouseover", (e) => {
+                    console.log(`${e.target.dataset.who} zajął ${e.target.dataset.position} miejsce na rajdzie ${raceInfo[e.target.dataset.race].series}#${raceInfo[e.target.dataset.race].race}/${raceInfo[e.target.dataset.race].year}`);
+                }, false);
+            }
+
+        };// koniec f. vs()
+
         
         const compareBtn = document.getElementById("compareBtn");
         compareBtn.addEventListener("click", vs, false); 
