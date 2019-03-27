@@ -440,45 +440,46 @@ const raceInfo = [
     "competitors": ["Kamyk", "Omen", "Atros", "Mistakes", "Smyk", "BJ", "Cieślu"],
     "position": ["1","2","3","4","5","6","7"]
   },
-    {
-      "year": 2018,
-      "race": 1,
-      "competitors": ["Atros", "Omen", "Smyk", "Mistakes", "BJ", "Cieślu"],
-      "position": ["1", "2", "3", "4", "5", "6"]
-    },
-    {
-      "series": "LTTC",
-      "year": 2018,
-      "race": 2,
-      "competitors": ["Atros", "Omen", "Smyk", "BJ", "Mistakes"],
-      "position": ["1", "2", "3", "4", "5"]
-    },
-    {
-      "series": "LTTC",
-      "year": 2018,
-      "race": 3,
-      "competitors": ["Atros", "Omen", "BJ", "Smyk"],
-      "position": ["1", "2", "3", "4"]
-    },
-    {
-      "series": "LTTC",
-      "year": 2018,
-      "race": 4,
-      "competitors": ["Atros", "Omen", "BJ", "Cieślu", "Emilus"],
-      "position": ["1", "2", "3", "4", "5"]
-    },
-    {
-      "series": "LTTC",
-      "year": 2018,
-      "race": 5,
-      "competitors": ["Atros", "Omen", "BJ", "Emilus"],
-      "position": ["1", "2", "3", "4"]
-    },
-    {
-      "series": "LTTC",
-      "year": 2018,
-      "race": 6,
-      "competitors": ["Atros", "Omen", "Emilus", "BJ", "William"],
-      "position": ["1", "1", "3", "5", "5"]
+  {
+    "series": "LTTC",
+    "year": 2018,
+    "race": 1,
+    "competitors": ["Atros", "Omen", "Smyk", "Mistakes", "BJ", "Cieślu"],
+    "position": ["1", "2", "3", "4", "5", "6"]
+  },
+  {
+    "series": "LTTC",
+    "year": 2018,
+    "race": 2,
+    "competitors": ["Atros", "Omen", "Smyk", "BJ", "Mistakes"],
+    "position": ["1", "2", "3", "4", "5"]
+  },
+  {
+    "series": "LTTC",
+    "year": 2018,
+    "race": 3,
+    "competitors": ["Atros", "Omen", "BJ", "Smyk"],
+    "position": ["1", "2", "3", "4"]
+  },
+  {
+    "series": "LTTC",
+    "year": 2018,
+    "race": 4,
+    "competitors": ["Atros", "Omen", "BJ", "Cieślu", "Emilus"],
+    "position": ["1", "2", "3", "4", "5"]
+  },
+  {
+    "series": "LTTC",
+    "year": 2018,
+    "race": 5,
+    "competitors": ["Atros", "Omen", "BJ", "Emilus"],
+    "position": ["1", "2", "3", "4"]
+  },
+  {
+    "series": "LTTC",
+    "year": 2018,
+    "race": 6,
+    "competitors": ["Atros", "Omen", "Emilus", "BJ", "William"],
+    "position": ["1", "1", "3", "5", "5"]
     }
   ];
