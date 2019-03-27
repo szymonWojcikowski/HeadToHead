@@ -424,11 +424,14 @@ xhttp.onreadystatechange = function() {
 
                 let positionPoint1;
                 let positionPoint2;
+                let y1 = positionPerCompetitors1 * numberOfCompetitors * 10;
+                let y2 = positionPerCompetitors2 * numberOfCompetitors * 10;
+                let cordinates2 = `left: ${milage}px; top: ${y2}px;`;
 
                 if (who1Pos !== undefined) {
                     positionPoint1 = document.createElementNS("http://www.w3.org/2000/svg", "circle");
                     positionPoint1.setAttribute("cx", milage);
-                    positionPoint1.setAttribute("cy", positionPerCompetitors1 * numberOfCompetitors * 10);
+                    positionPoint1.setAttribute("cy", y1);
                     positionPoint1.setAttribute("r", "5");
                     positionPoint1.setAttribute("stroke", "red");
                     positionPoint1.setAttribute("fill", "transparent");
@@ -442,7 +445,7 @@ xhttp.onreadystatechange = function() {
                 if (who2Pos !== undefined) {
                     positionPoint2 = document.createElementNS("http://www.w3.org/2000/svg", "circle");
                     positionPoint2.setAttribute("cx", milage);
-                    positionPoint2.setAttribute("cy", positionPerCompetitors2 * numberOfCompetitors * 10);
+                    positionPoint2.setAttribute("cy", y2);
                     positionPoint2.setAttribute("r", "5");
                     positionPoint2.setAttribute("stroke", "transparent");
                     positionPoint2.setAttribute("fill", "blue");
@@ -452,6 +455,15 @@ xhttp.onreadystatechange = function() {
                     // console.log(who2);
                     positionPoint2.setAttribute("data-who", who2);
                     positionPoint2.classList.add("chart-point-b");
+
+                    let tooltip = document.createElement("span");
+                    tooltip.classList.add("tip");
+                    // tooltip.setAttribute("top", y2);
+                    // tooltip.setAttribute("left", milage);
+                    tooltip.setAttribute("style", cordinates2);
+                    //tooltip.classList.add("hidden");
+                    tooltip.innerText = `${who2} zajął ${who2Pos} miejsce na rajdzie ${raceInfo[i].series}#${raceInfo[i].race}/${raceInfo[i].year}`;
+                    chartWrapper.appendChild(tooltip);
                 }
 
                 if (positionPoint1 !== undefined) {
@@ -545,15 +557,14 @@ xhttp.onreadystatechange = function() {
             chartWrapper.appendChild(chartBg); // wstawiamy wykres po sekcji porównywania
 
             let circles = document.querySelectorAll("circle");
-            console.log(circles);
-            // circles.map( item => {
-            //         (function() {item.addEventListener("mouseover", function(e) {
-            //             console.log("mouseover", e.target);
-            //             console.log(this);
-            //         }, false)})();
-            // });
+
             for(let i = 0; i < circles.length; i++) {
                 circles[i].addEventListener("mouseover", (e) => {
+                    // let tooltip = document.createElement("span");
+                    // tooltip.classList.add("tip");
+                    // tooltip.innerText = `${e.target.dataset.who} zajął ${e.target.dataset.position} miejsce na rajdzie ${raceInfo[e.target.dataset.race].series}#${raceInfo[e.target.dataset.race].race}/${raceInfo[e.target.dataset.race].year}`;
+                    // e.target.appendChild(tooltip);
+                    //e.target.firstChild.classList.remove("hidden");
                     console.log(`${e.target.dataset.who} zajął ${e.target.dataset.position} miejsce na rajdzie ${raceInfo[e.target.dataset.race].series}#${raceInfo[e.target.dataset.race].race}/${raceInfo[e.target.dataset.race].year}`);
                 }, false);
             }

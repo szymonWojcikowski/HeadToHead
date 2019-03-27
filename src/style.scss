@@ -54,6 +54,7 @@
 }
 
 .chart-wrapper {
+    position: relative;
     background-color: #EEC;
     width: 100%;
     height: 50vh;
@@ -69,4 +70,20 @@
     stroke: rgb(2, 3, 65);
     fill: rgb(2, 3, 65); 
     stroke-width: 3px;
+}
+
+circle {
+    position: relative;
+}
+
+.tip {
+    // display: inline-block;
+    // width: 200px;
+    line-height: 1rem;
+    opacity: 0.5;
+    padding: 0.5rem;
+    background-color: #373C42;
+    color: #FFF;
+    position: absolute;
+    z-index: 99;
 }
