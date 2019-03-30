@@ -279,11 +279,6 @@ xhttp.onreadystatechange = function() {
                     const st = "<div class=\"row no-gutters\"><div class=\"col-sm-7\">";
                     const mid = "</div><div class=\"col-sm-5\">";
                     const end = "</div></div>";
-                    //   const chart = `<svg width="1.2rem" height="1.2rem" viewBox="0 0 36 36" class="circular-chart">
-                    //                     <path class="circle" stroke-dasharray="${winsRate(winsAgainstOthersTab, winsTabLength).toFixed(3)*100}, 100" d="M18 2.0845
-                    //                         a 15.9155 15.9155 0 0 1 0 31.831
-                    //                         a 15.9155 15.9155 0 0 1 0 -31.831"></path>
-                    //                 </svg>`;
 
                     const chart = 
                         `<svg viewBox="0 0 64 64" class="pie">
@@ -426,7 +421,19 @@ xhttp.onreadystatechange = function() {
                 let positionPoint2;
                 let y1 = positionPerCompetitors1 * numberOfCompetitors * 10;
                 let y2 = positionPerCompetitors2 * numberOfCompetitors * 10;
-                let cordinates2 = `left: ${milage}px; top: ${y2}px;`;
+                let cordinates1 = `left: ${milage+5}px; top: ${y1+5}px;`;
+                let cordinates2 = `left: ${milage+5}px; top: ${y2+5}px;`;
+
+                function genTooltip(who, cordinates, whoPos) {
+                    let tooltip = document.createElement("span");
+                    tooltip.classList.add("tip");
+                    tooltip.classList.add("hidden");
+                    tooltip.setAttribute("style", cordinates);
+                    tooltip.setAttribute("data-who", who);
+                    tooltip.setAttribute("data-id", i);
+                    tooltip.innerText = `Na rajdzie ${raceInfo[i].series}#${raceInfo[i].race}/${raceInfo[i].year} ${who} zajął ${whoPos} miejsce (na ${numberOfCompetitors} startujących)`;
+                    chartWrapper.appendChild(tooltip);
+                }
 
                 if (who1Pos !== undefined) {
                     positionPoint1 = document.createElementNS("http://www.w3.org/2000/svg", "circle");
@@ -434,12 +441,16 @@ xhttp.onreadystatechange = function() {
                     positionPoint1.setAttribute("cy", y1);
                     positionPoint1.setAttribute("r", "5");
                     positionPoint1.setAttribute("stroke", "red");
-                    positionPoint1.setAttribute("fill", "transparent");
+                    // positionPoint1.setAttribute("fill", "transparent");
+                    positionPoint1.setAttribute("fill", "red");
                     positionPoint1.setAttribute("stroke-innerWidth", "5");
                     positionPoint1.setAttribute("data-position", who1Pos);
                     positionPoint1.setAttribute("data-race", i + 1);
                     positionPoint1.setAttribute("data-who", who1);
+                    positionPoint1.setAttribute("data-id", i);
                     positionPoint1.classList.add("chart-point-a");
+
+                    genTooltip(who1, cordinates1, who1Pos);
                 }
 
                 if (who2Pos !== undefined) {
@@ -449,21 +460,14 @@ xhttp.onreadystatechange = function() {
                     positionPoint2.setAttribute("r", "5");
                     positionPoint2.setAttribute("stroke", "transparent");
                     positionPoint2.setAttribute("fill", "blue");
-                    positionPoint2.setAttribute("stroke-innerWidth", "");
+                    positionPoint2.setAttribute("stroke-innerWidth", "5");
                     positionPoint2.setAttribute("data-position", who2Pos);
                     positionPoint2.setAttribute("data-race", i + 1);
-                    // console.log(who2);
                     positionPoint2.setAttribute("data-who", who2);
+                    positionPoint2.setAttribute("data-id", i);
                     positionPoint2.classList.add("chart-point-b");
 
-                    let tooltip = document.createElement("span");
-                    tooltip.classList.add("tip");
-                    // tooltip.setAttribute("top", y2);
-                    // tooltip.setAttribute("left", milage);
-                    tooltip.setAttribute("style", cordinates2);
-                    //tooltip.classList.add("hidden");
-                    tooltip.innerText = `${who2} zajął ${who2Pos} miejsce na rajdzie ${raceInfo[i].series}#${raceInfo[i].race}/${raceInfo[i].year}`;
-                    chartWrapper.appendChild(tooltip);
+                    genTooltip(who2, cordinates2, who2Pos);
                 }
 
                 if (positionPoint1 !== undefined) {
@@ -478,27 +482,27 @@ xhttp.onreadystatechange = function() {
                     console.group();
                     console.warn(who1 + " vs " + who2);
                     console.log("Race#" + raceCounter + " (" + raceInfo[i].year + " #" + raceInfo[i].race + ")");
-                    if (raceInfo[i].position[who1Id] === undefined) {
-                        console.log(who1 + " nie startował, a " + who2 + " był " + raceInfo[i].position[who2Id]);
-                        let result1 = document.createElement("div");
-                        result1.classList.add("col-sm-12", "bg-dark", "text-light");
-                        result1.innerText += `Na ${raceInfo[i].race} rajdzie w ${raceInfo[i].year} ${who1} nie startował, a ${who2} był ${raceInfo[i].position[who2Id]}`;
-                        compareDisplay.appendChild(result1);
-                    }
-                    else if (raceInfo[i].position[who2Id] === undefined) {
-                        console.log(who1 + " był " + raceInfo[i].position[who1Id] + ", a " + who2 + " nie startował.");
-                        let result1 = document.createElement("div");
-                        result1.classList.add("col-sm-12", "bg-dark", "text-light");
-                        result1.innerText += `Na ${raceInfo[i].race} rajdzie w ${raceInfo[i].year} ${who2} nie startował, a ${who1} był ${raceInfo[i].position[who1Id]}`;
-                        compareDisplay.appendChild(result1);
-                    }
-                    else {
-                        console.log(who1 + " był " + raceInfo[i].position[who1Id] + ", a " + who2 + " był " + raceInfo[i].position[who2Id]);
-                        let result1 = document.createElement("div");
-                        result1.classList.add("col-sm-12", "bg-dark", "text-light");
-                        result1.innerText += `Na ${raceInfo[i].race} rajdzie w ${raceInfo[i].year} ${who1} był ${raceInfo[i].position[who1Id]}, a ${who2} był ${raceInfo[i].position[who2Id]}`;
-                        compareDisplay.appendChild(result1);
-                    }
+                    // if (raceInfo[i].position[who1Id] === undefined) {
+                    //     console.log(who1 + " nie startował, a " + who2 + " był " + raceInfo[i].position[who2Id]);
+                    //     let result1 = document.createElement("div");
+                    //     result1.classList.add("col-sm-12", "bg-dark", "text-light");
+                    //     result1.innerText += `Na ${raceInfo[i].race} rajdzie w ${raceInfo[i].year} ${who1} nie startował, a ${who2} był ${raceInfo[i].position[who2Id]}`;
+                    //     compareDisplay.appendChild(result1);
+                    // }
+                    // else if (raceInfo[i].position[who2Id] === undefined) {
+                    //     console.log(who1 + " był " + raceInfo[i].position[who1Id] + ", a " + who2 + " nie startował.");
+                    //     let result1 = document.createElement("div");
+                    //     result1.classList.add("col-sm-12", "bg-dark", "text-light");
+                    //     result1.innerText += `Na ${raceInfo[i].race} rajdzie w ${raceInfo[i].year} ${who2} nie startował, a ${who1} był ${raceInfo[i].position[who1Id]}`;
+                    //     compareDisplay.appendChild(result1);
+                    // }
+                    // else {
+                    //     console.log(who1 + " był " + raceInfo[i].position[who1Id] + ", a " + who2 + " był " + raceInfo[i].position[who2Id]);
+                    //     let result1 = document.createElement("div");
+                    //     result1.classList.add("col-sm-12", "bg-dark", "text-light");
+                    //     result1.innerText += `Na ${raceInfo[i].race} rajdzie w ${raceInfo[i].year} ${who1} był ${raceInfo[i].position[who1Id]}, a ${who2} był ${raceInfo[i].position[who2Id]}`;
+                    //     compareDisplay.appendChild(result1);
+                    // }
                     console.groupEnd();
                 }
 
@@ -556,16 +560,27 @@ xhttp.onreadystatechange = function() {
         
             chartWrapper.appendChild(chartBg); // wstawiamy wykres po sekcji porównywania
 
-            let circles = document.querySelectorAll("circle");
+            let circles = document.querySelectorAll(".chart-bg > circle");
+            console.log("CCC ", circles);
 
             for(let i = 0; i < circles.length; i++) {
-                circles[i].addEventListener("mouseover", (e) => {
-                    // let tooltip = document.createElement("span");
-                    // tooltip.classList.add("tip");
-                    // tooltip.innerText = `${e.target.dataset.who} zajął ${e.target.dataset.position} miejsce na rajdzie ${raceInfo[e.target.dataset.race].series}#${raceInfo[e.target.dataset.race].race}/${raceInfo[e.target.dataset.race].year}`;
-                    // e.target.appendChild(tooltip);
-                    //e.target.firstChild.classList.remove("hidden");
+                let tooltipsForCircles = document.querySelectorAll(".tip");
+                circles[i].addEventListener("mouseenter", (e) => {
                     console.log(`${e.target.dataset.who} zajął ${e.target.dataset.position} miejsce na rajdzie ${raceInfo[e.target.dataset.race].series}#${raceInfo[e.target.dataset.race].race}/${raceInfo[e.target.dataset.race].year}`);
+                    for(let j = 0; j < tooltipsForCircles.length; j++) {
+                        //if (tooltipsForCircles[j].dataset.who == e.target.dataset.who && tooltipsForCircles[j].dataset.id == e.target.dataset.id) {
+                        if (e.target.dataset.who == tooltipsForCircles[j].dataset.who && e.target.dataset.id == tooltipsForCircles[j].dataset.id) {
+                            tooltipsForCircles[j].classList.toggle("hidden");
+                        }
+                    }
+                }, false);
+                circles[i].addEventListener("mouseleave", (e) => {
+                    console.log(`${e.target.dataset.who} zajął ${e.target.dataset.position} miejsce na rajdzie ${raceInfo[e.target.dataset.race].series}#${raceInfo[e.target.dataset.race].race}/${raceInfo[e.target.dataset.race].year}`);
+                    for(let j = 0; j < tooltipsForCircles.length; j++) {
+                        if (tooltipsForCircles[j].dataset.who == e.target.dataset.who && tooltipsForCircles[j].dataset.id == e.target.dataset.id) {
+                            tooltipsForCircles[j].classList.toggle("hidden");
+                        }
+                    }
                 }, false);
             }
 

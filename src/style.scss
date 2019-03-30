@@ -1,3 +1,9 @@
+
+@mixin layer-down($howMany) {
+    position: relative;
+    z-index: $howMany * -1;
+}
+
 .pie {
     position: absolute;
     margin-left: .3rem;
@@ -36,18 +42,22 @@
 }
 
 .chart-line-all {
+    position: relative;
+    z-index: -1;
     fill: none;
     stroke: rgba(59, 59, 59, 0.897);
     stroke-width: 2px;
 }
 
 .chart-line-b {
+    @include layer-down(2);
     fill: none;
     stroke: rgb(3, 3, 51);
     stroke-width: 2px;
 }
 
 .chart-line-a {
+    @include layer-down(3);
     fill: none;
     stroke: rgb(212, 9, 26);
     stroke-width: 2px;
@@ -63,6 +73,7 @@
 .chart-point-a {
     stroke: rgb(212, 9, 26);
     fill: transparent; 
+    fill: red; 
     stroke-width: 3px;
 }
 
@@ -80,10 +91,22 @@ circle {
     // display: inline-block;
     // width: 200px;
     line-height: 1rem;
+    font-size: 1rem;
     opacity: 0.5;
+    transition: all .4s;
     padding: 0.5rem;
     background-color: #373C42;
     color: #FFF;
     position: absolute;
     z-index: 99;
+    cursor: pointer;
+}
+
+.hidden {
+    // display: none;
+    line-height: 0;
+    font-size: 0;
+    padding: 0;
+    opacity: 0;
+    transition: all .4s;
 }
