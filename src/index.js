@@ -16,7 +16,7 @@ xhttp.onreadystatechange = function() {
         const response = JSON.parse(xhttp.responseText);
         const raceInfo = response.raceInfo;
 
-        console.info("race INFO", raceInfo);
+        //console.info("race INFO", raceInfo);
         //=============diagnostyka danych z rajdami===================
         function dataCheck() {
             let nrOfCorrectRaces = 0;
@@ -29,7 +29,7 @@ xhttp.onreadystatechange = function() {
                     console.error("Błędny index " + i + " Rok " + raceInfo[i].year + " rajd " + raceInfo[i].race)
                 }
             }
-            console.log("--------------------\n" + nrOfCorrectRaces + " poprawnych rajdów\n" + "--------------------");
+            //console.log("--------------------\n" + nrOfCorrectRaces + " poprawnych rajdów\n" + "--------------------");
         }
 
         dataCheck();
@@ -39,7 +39,7 @@ xhttp.onreadystatechange = function() {
         const drawResults = function(rYear, rRace, rPosition, rCompetitor) {
         if (rPosition !== undefined) {
                 console.info(rPosition + " miejsce: " + rCompetitor);
-        }
+            }
         };
 
 
@@ -91,43 +91,62 @@ xhttp.onreadystatechange = function() {
 
         //------------pobranie selectów i innych elementów strony --------------
         const selects = document.getElementsByTagName("select");
-        const selectedOption1 = selects[0].options[selects[0].selectedIndex];
-        const selectedOption2 = selects[1].options[selects[1].selectedIndex];
+        // const selectedOption1 = selects[0].options[selects[0].selectedIndex];
+        // const selectedOption2 = selects[1].options[selects[1].selectedIndex];
 
 
         //-----------dodanie nasłuchu do selectów-----------------------
         for (let i = 0; i < selects.length; i++) {
-            selects[i].addEventListener("change", function() {
+            selects[i].addEventListener("blur", function() {
                 //let who = this.options[this.selectedIndex].value;
 
                 let context = this;
-                console.error('Wybrałeś: ' + this.options[this.selectedIndex].value);
+                //console.error('Wybrałeś: ' + this.options[this.selectedIndex].value);
                 showSelectedTruckerAndDisplayStats(context, i);
 
                 clearingComparison();
 
-                console.log(this);
+                //console.log(this);
                 if (this.id === "firstSelect") {
-                    console.log("trzeba wywołać dodatkową funkcję do stworzenia listy oponentów");
+                    //console.log("trzeba wywołać dodatkową funkcję do stworzenia listy oponentów");
                     prepareSecondSelect();
                 }
             });
         }
 
+        for (let i = 0; i < selects.length; i++) {
+            selects[i].addEventListener("change", function() { //do zrobienia: DRY
+                //let who = this.options[this.selectedIndex].value;
+
+                let context = this;
+                //console.error('Wybrałeś: ' + this.options[this.selectedIndex].value);
+                showSelectedTruckerAndDisplayStats(context, i);
+
+                clearingComparison();
+
+                //console.log(this);
+                if (this.id === "firstSelect") {
+                    //console.log("trzeba wywołać dodatkową funkcję do stworzenia listy oponentów");
+                    prepareSecondSelect();
+                }
+            });
+        }
+
+
         //------------tworzymy tablicę ze wszystkich pojedyńczych występów na rajdzie-------------------
         
         let competitorsToSelect = [];
         for (let i = 0; i < raceInfo.length; i++) {
-        competitorsToSelect = competitorsToSelect.concat(raceInfo[i].competitors);
-        console.info("pętla nr " + i + ", dodani uczestnicy " + raceInfo[i].competitors);
+            competitorsToSelect = competitorsToSelect.concat(raceInfo[i].competitors);
+            //console.info("pętla nr " + i + ", dodani uczestnicy " + raceInfo[i].competitors);
         }
-        console.info("competitorsToSelect " + competitorsToSelect);
+        //console.info("competitorsToSelect " + competitorsToSelect);
         
         //-------pozostawienie unikatów z tablicy competitorsToSelect za pomocą roszerzeń prototypu tablic, posortowanie----------------------
 
         const uniques = competitorsToSelect.unique().sort();
             
-        console.log("Zawodnicy do wyboru: " + uniques + " Jest " + uniques.length + " zawodników do wyboru.");
+        //console.log("Zawodnicy do wyboru: " + uniques + " Jest " + uniques.length + " zawodników do wyboru.");
 
         addingSelects(uniques, 0); //wypełnienie firstSelect kierowcami z tablicy uniques
 
@@ -141,14 +160,14 @@ xhttp.onreadystatechange = function() {
                 let selectedOption = select.options[select.selectedIndex];
                 const selectedText   = selectedOption.text;  // 'dane'
                 const selectedValue  = selectedOption.value; // 'wartość'"
-                console.log(">>>>>>" + who, selectedText, selectedValue);
+                //console.log(">>>>>>" + who, selectedText, selectedValue);
             
                 // const showSelect = function showSelect() {
                 //      console.log("Wybrano zawodnika " + selectedText);
                 // };
                 // showSelect();
             
-                    //------statsDisplay---------
+                //------statsDisplay---------
                 const showMeStats = function showMeStats(raceInfo) {
 
                     //var raceInfo = raceInfo;
@@ -214,14 +233,12 @@ xhttp.onreadystatechange = function() {
                             absent++;
                         }
                         else {
-                            console.log("Zawodnik " + selectedText);
-                            console.warn("Dalsze miejsce " + raceInfo[i].position[chosenIndex] + " na " + raceInfo[i].position.length);
-
-
+                            //console.log("Wybrany zawodnik: " + selectedText);
+                            //console.warn(`Rajd ${raceNr}: dalsze miejsce :( ${raceInfo[i].position[chosenIndex]} na ${raceInfo[i].position.length}`);
                             furtherPlaces++;
                             competed++;
                         }
-                        }
+                    }
                     
                     //-------statystyki procentowe wyliczane po warunkach zliczających----
 
@@ -264,7 +281,7 @@ xhttp.onreadystatechange = function() {
 
                         let winsRate = function(winsAgainstOthersTab, winsTabLength) {
                             let winsRateSum  = winsAgainstOthersTab.reduce( (prev, cur) => {
-                                console.log("WINS RATE------------------", winsAgainstOthersTab, winsTabLength)
+                                //console.log("WINS RATE------------------", winsAgainstOthersTab, winsTabLength)
                                 return prev + cur;
                             });
                             return winsRateSum / winsTabLength;
@@ -316,7 +333,7 @@ xhttp.onreadystatechange = function() {
                     let newElOption = null;
                     newElOption = document.createElement("option");
                     newElOption.innerHTML = truckersTab[i];
-                    console.warn(selects[selectToFill]);
+                    //console.warn(selects[selectToFill]);
 
                     mySelect = selects[selectToFill];
                     mySelect.appendChild(newElOption);
@@ -329,7 +346,7 @@ xhttp.onreadystatechange = function() {
         function truckersToCompare() {
             let selectedOption = selects[0].options[selects[0].selectedIndex];
             let selectedText = selectedOption.text;
-            let idOfSelected = uniques.indexOf(selectedText);
+            //let idOfSelected = uniques.indexOf(selectedText);
             let avilableToCompare =[];
             avilableToCompare = uniques.filter(function(el) {
                 return el != selectedOption.text;
