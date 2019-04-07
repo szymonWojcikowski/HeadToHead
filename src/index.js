@@ -534,19 +534,19 @@ xhttp.onreadystatechange = function() {
 
                     if (who1Pos && who2Pos !== undefined) {
                         if (who1Pos < who2Pos) {
-                            console.warn("if ", i, who1Score, who2Score, who1Pos, who2Pos);
+                            //console.warn("if ", i, who1Score, who2Score, who1Pos, who2Pos);
                             who1Score++;
-                            console.error(i, who1Score, who2Score, who1Pos, who2Pos);
+                            //console.error(i, who1Score, who2Score, who1Pos, who2Pos);
                         }
                         else if (who2Pos < who1Pos) {
-                            console.warn("else if ", i, who1Score, who2Score, who1Pos, who2Pos);
+                            //console.warn("else if ", i, who1Score, who2Score, who1Pos, who2Pos);
                             who2Score++;
-                            console.error(i, who1Score, who2Score, who1Pos, who2Pos);
+                            //console.error(i, who1Score, who2Score, who1Pos, who2Pos);
                         }
                         else {
-                            console.warn("else ", i, who1Score, who2Score, who1Pos, who2Pos);
+                            //console.warn("else ", i, who1Score, who2Score, who1Pos, who2Pos);
                             draw++;
-                            console.error(i, who1Score, who2Score, who1Pos, who2Pos);
+                            //console.error(i, who1Score, who2Score, who1Pos, who2Pos);
                         }
                     }
                 }
@@ -573,20 +573,20 @@ xhttp.onreadystatechange = function() {
                     function drawSingleMarker(item) { 
                         if (item !== null) {
                             console.log("Rysujmy kołka");
-                            let positionPoint1Marker = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-                            positionPoint1Marker.setAttribute("cx", item.cx);
-                            positionPoint1Marker.setAttribute("cy", item.cy);
-                            positionPoint1Marker.setAttribute("r", r);
-                            positionPoint1Marker.setAttribute("stroke", strokeColor);
+                            let positionPointMarker = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+                            positionPointMarker.setAttribute("cx", item.cx);
+                            positionPointMarker.setAttribute("cy", item.cy);
+                            positionPointMarker.setAttribute("r", r);
+                            positionPointMarker.setAttribute("stroke", strokeColor);
                             // positionPoint1.setAttribute("fill", "transparent");
-                            positionPoint1Marker.setAttribute("fill", fillColor);
-                            positionPoint1Marker.setAttribute("stroke-innerWidth", "5");
-                            positionPoint1Marker.setAttribute("data-position", item.position);
-                            positionPoint1Marker.setAttribute("data-race", item.race);
-                            positionPoint1Marker.setAttribute("data-who", item.who);
-                            positionPoint1Marker.setAttribute("data-id", item.id);
-                            positionPoint1Marker.classList.add(cssClass);
-                            chartBg.appendChild(positionPoint1Marker);
+                            positionPointMarker.setAttribute("fill", fillColor);
+                            positionPointMarker.setAttribute("stroke-innerWidth", "5");
+                            positionPointMarker.setAttribute("data-position", item.position);
+                            positionPointMarker.setAttribute("data-race", item.race);
+                            positionPointMarker.setAttribute("data-who", item.who);
+                            positionPointMarker.setAttribute("data-id", item.id);
+                            positionPointMarker.classList.add(cssClass);
+                            chartBg.appendChild(positionPointMarker);
                         } else {
                             console.log("Zawodnik nie startował");
                         }
@@ -595,7 +595,7 @@ xhttp.onreadystatechange = function() {
                     tab.forEach(drawSingleMarker);
                 }
 
-                drawMarkers(positionPoint1MarkerTab, 5, "red", "red", "chart-point-a"); // rysuj wskazniki dla pierwszego kierowcy: f.(tab, r, strokeColor, fillColor, cssClass)
+                drawMarkers(positionPoint1MarkerTab, 7, "rgb(212, 9, 26)", "rgb(212, 9, 26)", "chart-point-a"); // rysuj wskazniki dla pierwszego kierowcy: f.(tab, r, strokeColor, fillColor, cssClass)
                 drawMarkers(positionPoint2MarkerTab, 5, "rgb(2, 3, 65)", "rgb(2, 3, 65)", "chart-point-b"); // rysuj wskazniki dla drugiego kierowcy: f.(tab, r, strokeColor, fillColor, cssClass)
 
                 // chartBg.innerHTML = `
