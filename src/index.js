@@ -381,7 +381,6 @@ xhttp.onreadystatechange = function() {
         /* funkcja do porównywania wyników zawodników - wymaga sprawdzenia-------------------*/
         const vs = function() {
             const compareDisplay = document.getElementById("comparison");
-            console.log(compareDisplay.firstChild);
             if (compareDisplay.firstChild === null) {
                 //var select1 = document.getElementById("firstSelect");
                 let selectedOption1 = selects[0].options[selects[0].selectedIndex];
@@ -407,6 +406,9 @@ xhttp.onreadystatechange = function() {
                 let oneRaceWidth = window.innerWidth / raceInfo.length;
                 let svgHeight = 200;
 
+                let positionPoint1MarkerTab = [];
+                let positionPoint2MarkerTab = [];
+
                 //-------SVG-----------------
                 let chartWrapper = document.createElement("div");
                 chartWrapper.classList.add("chart-wrapper");
@@ -426,8 +428,8 @@ xhttp.onreadystatechange = function() {
                 for (let i = 0; i < raceInfo.length; i++) {
                     let who1Id = raceInfo[i].competitors.indexOf(who1);//index danego kierowcy w tabeli uczestników danego rajdu[i]
                     let who2Id = raceInfo[i].competitors.indexOf(who2); //jw
-                    let who1Pos = raceInfo[i].position[who1Id];//pozycja z tabeli wzięta po odpowiadającym indexie z tabeli uczestników
-                    let who2Pos = raceInfo[i].position[who2Id];//jw
+                    let who1Pos = parseInt(raceInfo[i].position[who1Id]) || undefined;//pozycja z tabeli wzięta po odpowiadającym indexie z tabeli uczestników
+                    let who2Pos = parseInt(raceInfo[i].position[who2Id]) || undefined;//jw
                     let numberOfCompetitors = raceInfo[i].competitors.length;
                     let raceCounter = i + 1;
 
@@ -441,8 +443,7 @@ xhttp.onreadystatechange = function() {
                     chartPoints2 += `${milage}, ${who2Pos !== undefined ? positionPerCompetitors2 * numberOfCompetitors * 10 : 0} `;
                     chartPointsNrOfDrivers += `${milage}, ${numberOfCompetitors * 10} `;
 
-                    let positionPoint1;
-                    let positionPoint2;
+ 
                     let y1 = positionPerCompetitors1 * numberOfCompetitors * 10;
                     let y2 = positionPerCompetitors2 * numberOfCompetitors * 10;
                     let cordinates1 = `left: ${milage+5}px; top: ${y1+5}px;`;
@@ -460,47 +461,47 @@ xhttp.onreadystatechange = function() {
                     }
 
                     if (who1Pos !== undefined) {
-                        positionPoint1 = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-                        positionPoint1.setAttribute("cx", milage);
-                        positionPoint1.setAttribute("cy", y1);
-                        positionPoint1.setAttribute("r", "5");
-                        positionPoint1.setAttribute("stroke", "red");
-                        // positionPoint1.setAttribute("fill", "transparent");
-                        positionPoint1.setAttribute("fill", "red");
-                        positionPoint1.setAttribute("stroke-innerWidth", "5");
-                        positionPoint1.setAttribute("data-position", who1Pos);
-                        positionPoint1.setAttribute("data-race", i + 1);
-                        positionPoint1.setAttribute("data-who", who1);
-                        positionPoint1.setAttribute("data-id", i);
-                        positionPoint1.classList.add("chart-point-a");
+                        
+                        const positionPoint1Marker = {
+                            cx: milage,
+                            cy: y1,
+                            id: i,
+                            position: who1Pos,
+                            race: i + 1,
+                            who: who1
+                        }
+
+                        positionPoint1MarkerTab.push(positionPoint1Marker);
 
                         genTooltip(who1, cordinates1, who1Pos);
+                    } else {
+                        positionPoint1MarkerTab.push(null);
                     }
 
                     if (who2Pos !== undefined) {
-                        positionPoint2 = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-                        positionPoint2.setAttribute("cx", milage);
-                        positionPoint2.setAttribute("cy", y2);
-                        positionPoint2.setAttribute("r", "5");
-                        positionPoint2.setAttribute("stroke", "transparent");
-                        positionPoint2.setAttribute("fill", "blue");
-                        positionPoint2.setAttribute("stroke-innerWidth", "5");
-                        positionPoint2.setAttribute("data-position", who2Pos);
-                        positionPoint2.setAttribute("data-race", i + 1);
-                        positionPoint2.setAttribute("data-who", who2);
-                        positionPoint2.setAttribute("data-id", i);
-                        positionPoint2.classList.add("chart-point-b");
+                        const positionPoint2Marker = {
+                            cx: milage,
+                            cy: y2,
+                            id: i,
+                            position: who2Pos,
+                            race: i + 1,
+                            who: who2
+                        }
+
+                        positionPoint2MarkerTab.push(positionPoint2Marker);
 
                         genTooltip(who2, cordinates2, who2Pos);
+                    } else {
+                        positionPoint2MarkerTab.push(null);
                     }
 
-                    if (positionPoint1 !== undefined) {
-                        chartBg.appendChild(positionPoint1);
-                    }
+                    // if (positionPoint1Marker !== undefined) {
+                    //     chartBg.appendChild(positionPoint1Marker);
+                    // }
 
-                    if (positionPoint2 !== undefined) {
-                        chartBg.appendChild(positionPoint2);
-                    }
+                    // if (positionPoint2Marker !== undefined) {
+                    //     chartBg.appendChild(positionPoint2Marker);
+                    // }
 
                     if (raceInfo[i].position[who1Id] !== undefined || raceInfo[i].position[who2Id] !== undefined) {
                         console.group();
@@ -533,13 +534,19 @@ xhttp.onreadystatechange = function() {
 
                     if (who1Pos && who2Pos !== undefined) {
                         if (who1Pos < who2Pos) {
+                            console.warn("if ", i, who1Score, who2Score, who1Pos, who2Pos);
                             who1Score++;
+                            console.error(i, who1Score, who2Score, who1Pos, who2Pos);
                         }
                         else if (who2Pos < who1Pos) {
+                            console.warn("else if ", i, who1Score, who2Score, who1Pos, who2Pos);
                             who2Score++;
+                            console.error(i, who1Score, who2Score, who1Pos, who2Pos);
                         }
                         else {
+                            console.warn("else ", i, who1Score, who2Score, who1Pos, who2Pos);
                             draw++;
+                            console.error(i, who1Score, who2Score, who1Pos, who2Pos);
                         }
                     }
                 }
@@ -560,6 +567,37 @@ xhttp.onreadystatechange = function() {
                 lineAll.setAttribute("points", chartPointsNrOfDrivers);
                 chartBg.appendChild(lineAll);
 
+                //----------------funkcja rysująca markery pozycji zawodników na podstawie obiektów w tablicy-------------
+
+                function drawMarkers(tab, r, strokeColor, fillColor, cssClass) {
+                    function drawSingleMarker(item) { 
+                        if (item !== null) {
+                            console.log("Rysujmy kołka");
+                            let positionPoint1Marker = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+                            positionPoint1Marker.setAttribute("cx", item.cx);
+                            positionPoint1Marker.setAttribute("cy", item.cy);
+                            positionPoint1Marker.setAttribute("r", r);
+                            positionPoint1Marker.setAttribute("stroke", strokeColor);
+                            // positionPoint1.setAttribute("fill", "transparent");
+                            positionPoint1Marker.setAttribute("fill", fillColor);
+                            positionPoint1Marker.setAttribute("stroke-innerWidth", "5");
+                            positionPoint1Marker.setAttribute("data-position", item.position);
+                            positionPoint1Marker.setAttribute("data-race", item.race);
+                            positionPoint1Marker.setAttribute("data-who", item.who);
+                            positionPoint1Marker.setAttribute("data-id", item.id);
+                            positionPoint1Marker.classList.add(cssClass);
+                            chartBg.appendChild(positionPoint1Marker);
+                        } else {
+                            console.log("Zawodnik nie startował");
+                        }
+                    }
+
+                    tab.forEach(drawSingleMarker);
+                }
+
+                drawMarkers(positionPoint1MarkerTab, 5, "red", "red", "chart-point-a"); // rysuj wskazniki dla pierwszego kierowcy: f.(tab, r, strokeColor, fillColor, cssClass)
+                drawMarkers(positionPoint2MarkerTab, 5, "rgb(2, 3, 65)", "rgb(2, 3, 65)", "chart-point-b"); // rysuj wskazniki dla drugiego kierowcy: f.(tab, r, strokeColor, fillColor, cssClass)
+
                 // chartBg.innerHTML = `
                 //     <polyline class="chart-line-all" points="${chartPointsNrOfDrivers}" />
                 //     <polyline class="chart-line-a" points="${chartPoints1}" />
@@ -576,8 +614,8 @@ xhttp.onreadystatechange = function() {
                 h2hStat.classList.add("col-sm-12", "bg-dark", "text-light");
                 h2hStat.innerHTML =
                     `<section class=\"row\"><div class=\"col-sm-12 bg-dark text-light\"><strong>Head to head</strong><br>
-                        ${who1} wygrał ${who1Score} <br>
-                        ${who2} wygrał ${who2Score} <br>
+                        ${who1} był wyżej ${who1Score} <br>
+                        ${who2} był wyżej ${who2Score} <br>
                         remis był: ${draw} </section></div>`;
                 compareDisplay.insertBefore(h2hStat, compareDisplay.firstChild);
 
