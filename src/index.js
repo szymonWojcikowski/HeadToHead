@@ -409,53 +409,44 @@ xhttp.onreadystatechange = function() {
         };
 
         
-        /* funkcja do porównywania wyników zawodników - wymaga sprawdzenia-------------------*/
+        /*--------- funkcja do porównywania wyników zawodników - wymaga sprawdzenia-------------------*/
         const vs = function() {
             const compareDisplay = document.getElementById("comparison");
             if (compareDisplay.firstChild === null) {
-                //var select1 = document.getElementById("firstSelect");
+                // --- first driver ---
                 let selectedOption1 = selects[0].options[selects[0].selectedIndex];
-
                 let selectedText1 = selectedOption1.text;
                 let who1 = selectedText1;
-                
-                //var select2 = document.getElementById("selectoToCompare");
+                // --- second driver ---
                 let selectedOption2 = selects[1].options[selects[1].selectedIndex];
                 let selectedText2 = selectedOption2.text;
                 let who2 = selectedText2;
-                
+                // --- score collection ---
                 let who1Score = 0;
                 let who2Score = 0;
                 let draw = 0;
-
-                
-
                 // --- chart variables ---
                 let chartPoints1 = "";
                 let chartPoints2 = "";
                 let chartPointsNrOfDrivers = "";
                 let oneRaceWidth = window.innerWidth / raceInfo.length;
                 let svgHeight = 200;
-
+                // --- markers arrays ---
                 let positionPoint1MarkerTab = [];
                 let positionPoint2MarkerTab = [];
 
-                //-------SVG-----------------
+                // --- SVG section ---
                 let chartWrapper = document.createElement("div");
                 chartWrapper.classList.add("chart-wrapper");
-                let chartBg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
 
-                //chartBg.setAttribute("width", window.innerWidth);
-                //chartBg.setAttribute("height", 100);
-                //chartBg.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+                let chartBg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
                 chartBg.setAttribute("version", "1.1");
                 chartBg.classList.add("chart-bg");
 
-
-
+                // --- chart wrapper injection ---
                 compareDisplay.appendChild(chartWrapper);
-                //-------------------------------
-
+                
+                //------------ calculate scores and charts ----------------
                 for (let i = 0; i < raceInfo.length; i++) {
                     let who1Id = raceInfo[i].competitors.indexOf(who1);//index danego kierowcy w tabeli uczestników danego rajdu[i]
                     let who2Id = raceInfo[i].competitors.indexOf(who2); //jw
@@ -470,16 +461,15 @@ xhttp.onreadystatechange = function() {
                     let milage = (i) * oneRaceWidth;
 
                     chartPoints1 += `${milage}, ${who1Pos !== undefined ? positionPerCompetitors1 * numberOfCompetitors * 10 : 0} `;
-                    // chartPoints1 += `${milage}, ${who1Pos !== undefined ? winsAgainstOthersTab[i] * svgHeight : 0} `;
                     chartPoints2 += `${milage}, ${who2Pos !== undefined ? positionPerCompetitors2 * numberOfCompetitors * 10 : 0} `;
                     chartPointsNrOfDrivers += `${milage}, ${numberOfCompetitors * 10} `;
 
- 
                     let y1 = positionPerCompetitors1 * numberOfCompetitors * 10;
                     let y2 = positionPerCompetitors2 * numberOfCompetitors * 10;
                     let cordinates1 = `left: ${milage+5}px; top: ${y1+5}px;`;
                     let cordinates2 = `left: ${milage+5}px; top: ${y2+5}px;`;
 
+                    // --- creating&add tooltips --- 
                     function genTooltip(who, cordinates, whoPos) {
                         let tooltip = document.createElement("span");
                         tooltip.classList.add("tip");
@@ -492,7 +482,6 @@ xhttp.onreadystatechange = function() {
                     }
 
                     if (who1Pos !== undefined) {
-                        
                         const positionPoint1Marker = {
                             cx: milage,
                             cy: y1,
@@ -501,9 +490,7 @@ xhttp.onreadystatechange = function() {
                             race: i + 1,
                             who: who1
                         }
-
                         positionPoint1MarkerTab.push(positionPoint1Marker);
-
                         genTooltip(who1, cordinates1, who1Pos);
                     } else {
                         positionPoint1MarkerTab.push(null);
@@ -518,26 +505,16 @@ xhttp.onreadystatechange = function() {
                             race: i + 1,
                             who: who2
                         }
-
                         positionPoint2MarkerTab.push(positionPoint2Marker);
-
                         genTooltip(who2, cordinates2, who2Pos);
                     } else {
                         positionPoint2MarkerTab.push(null);
                     }
 
-                    // if (positionPoint1Marker !== undefined) {
-                    //     chartBg.appendChild(positionPoint1Marker);
-                    // }
-
-                    // if (positionPoint2Marker !== undefined) {
-                    //     chartBg.appendChild(positionPoint2Marker);
-                    // }
-
-                    if (raceInfo[i].position[who1Id] !== undefined || raceInfo[i].position[who2Id] !== undefined) {
-                        console.group();
-                        console.warn(who1 + " vs " + who2);
-                        console.log("Race#" + raceCounter + " (" + raceInfo[i].year + " #" + raceInfo[i].race + ")");
+                    // if (raceInfo[i].position[who1Id] !== undefined || raceInfo[i].position[who2Id] !== undefined) {
+                    //     console.group();
+                    //     console.warn(who1 + " vs " + who2);
+                    //     console.log("Race#" + raceCounter + " (" + raceInfo[i].year + " #" + raceInfo[i].race + ")");
                         // if (raceInfo[i].position[who1Id] === undefined) {
                         //     console.log(who1 + " nie startował, a " + who2 + " był " + raceInfo[i].position[who2Id]);
                         //     let result1 = document.createElement("div");
@@ -559,25 +536,19 @@ xhttp.onreadystatechange = function() {
                         //     result1.innerText += `Na ${raceInfo[i].race} rajdzie w ${raceInfo[i].year} ${who1} był ${raceInfo[i].position[who1Id]}, a ${who2} był ${raceInfo[i].position[who2Id]}`;
                         //     compareDisplay.appendChild(result1);
                         // }
-                        console.groupEnd();
-                    }
+                    //     console.groupEnd();
+                    // }
 
-
+                    // --- score calculator ---
                     if (who1Pos && who2Pos !== undefined) {
                         if (who1Pos < who2Pos) {
-                            //console.warn("if ", i, who1Score, who2Score, who1Pos, who2Pos);
                             who1Score++;
-                            //console.error(i, who1Score, who2Score, who1Pos, who2Pos);
                         }
                         else if (who2Pos < who1Pos) {
-                            //console.warn("else if ", i, who1Score, who2Score, who1Pos, who2Pos);
                             who2Score++;
-                            //console.error(i, who1Score, who2Score, who1Pos, who2Pos);
                         }
                         else {
-                            //console.warn("else ", i, who1Score, who2Score, who1Pos, who2Pos);
                             draw++;
-                            //console.error(i, who1Score, who2Score, who1Pos, who2Pos);
                         }
                     }
                 }
@@ -598,18 +569,15 @@ xhttp.onreadystatechange = function() {
                 lineAll.setAttribute("points", chartPointsNrOfDrivers);
                 chartBg.appendChild(lineAll);
 
-                //----------------funkcja rysująca markery pozycji zawodników na podstawie obiektów w tablicy-------------
-
+                //--- funkcja rysująca markery pozycji zawodników na podstawie obiektów w tablicy ---
                 function drawMarkers(tab, r, strokeColor, fillColor, cssClass) {
                     function drawSingleMarker(item) { 
                         if (item !== null) {
-                            console.log("Rysujmy kołka");
                             let positionPointMarker = document.createElementNS("http://www.w3.org/2000/svg", "circle");
                             positionPointMarker.setAttribute("cx", item.cx);
                             positionPointMarker.setAttribute("cy", item.cy);
                             positionPointMarker.setAttribute("r", r);
                             positionPointMarker.setAttribute("stroke", strokeColor);
-                            // positionPoint1.setAttribute("fill", "transparent");
                             positionPointMarker.setAttribute("fill", fillColor);
                             positionPointMarker.setAttribute("stroke-innerWidth", "5");
                             positionPointMarker.setAttribute("data-position", item.position);
@@ -622,25 +590,22 @@ xhttp.onreadystatechange = function() {
                             console.log("Zawodnik nie startował");
                         }
                     }
-
                     tab.forEach(drawSingleMarker);
                 }
 
-                drawMarkers(positionPoint1MarkerTab, 7, "rgb(212, 9, 26)", "rgb(212, 9, 26)", "chart-point-a"); // rysuj wskazniki dla pierwszego kierowcy: f.(tab, r, strokeColor, fillColor, cssClass)
-                drawMarkers(positionPoint2MarkerTab, 5, "rgb(2, 3, 65)", "rgb(2, 3, 65)", "chart-point-b"); // rysuj wskazniki dla drugiego kierowcy: f.(tab, r, strokeColor, fillColor, cssClass)
+                // --- rysuj wskazniki dla pierwszego kierowcy: f.(tab, r, strokeColor, fillColor, cssClass) ---
+                drawMarkers(positionPoint1MarkerTab, 7, "rgb(212, 9, 26)", "rgb(212, 9, 26)", "chart-point-a"); 
 
-                // chartBg.innerHTML = `
-                //     <polyline class="chart-line-all" points="${chartPointsNrOfDrivers}" />
-                //     <polyline class="chart-line-a" points="${chartPoints1}" />
-                //     <polyline class="chart-line-b" points="${chartPoints2}" />
-                // `;
-                
+                // --- rysuj wskazniki dla drugiego kierowcy: f.(tab, r, strokeColor, fillColor, cssClass) ---
+                drawMarkers(positionPoint2MarkerTab, 5, "rgb(2, 3, 65)", "rgb(2, 3, 65)", "chart-point-b");
 
+                // --- score in console ---
                 console.log("---< Wynik H2H >---");
                 console.info(who1 + " był wyżej " + who1Score);
                 console.info(who2 + " był wyżej " + who2Score);
                 console.info("remis był: " + draw);
 
+                // --- markup for show driver comparison ---
                 let h2hStat = document.createElement("div");
                 h2hStat.classList.add("col-sm-12", "bg-dark", "text-light");
                 h2hStat.innerHTML =
@@ -650,25 +615,22 @@ xhttp.onreadystatechange = function() {
                         remis był: ${draw} </section></div>`;
                 compareDisplay.insertBefore(h2hStat, compareDisplay.firstChild);
 
-            
-                chartWrapper.appendChild(chartBg); // wstawiamy wykres po sekcji porównywania
+                // --- wstawiamy wykres po sekcji porównywania ---
+                chartWrapper.appendChild(chartBg); 
 
+                // --- add event listeners on markers ---
                 let circles = document.querySelectorAll(".chart-bg > circle");
-                console.log("CCC ", circles);
 
                 for(let i = 0; i < circles.length; i++) {
                     let tooltipsForCircles = document.querySelectorAll(".tip");
                     circles[i].addEventListener("mouseenter", (e) => {
-                        console.log(`${e.target.dataset.who} zajął ${e.target.dataset.position} miejsce na rajdzie ${raceInfo[e.target.dataset.race].series}#${raceInfo[e.target.dataset.race].race}/${raceInfo[e.target.dataset.race].year}`);
                         for(let j = 0; j < tooltipsForCircles.length; j++) {
-                            //if (tooltipsForCircles[j].dataset.who == e.target.dataset.who && tooltipsForCircles[j].dataset.id == e.target.dataset.id) {
                             if (e.target.dataset.who == tooltipsForCircles[j].dataset.who && e.target.dataset.id == tooltipsForCircles[j].dataset.id) {
                                 tooltipsForCircles[j].classList.toggle("hidden");
                             }
                         }
                     }, false);
                     circles[i].addEventListener("mouseleave", (e) => {
-                        console.log(`${e.target.dataset.who} zajął ${e.target.dataset.position} miejsce na rajdzie ${raceInfo[e.target.dataset.race].series}#${raceInfo[e.target.dataset.race].race}/${raceInfo[e.target.dataset.race].year}`);
                         for(let j = 0; j < tooltipsForCircles.length; j++) {
                             if (tooltipsForCircles[j].dataset.who == e.target.dataset.who && tooltipsForCircles[j].dataset.id == e.target.dataset.id) {
                                 tooltipsForCircles[j].classList.toggle("hidden");
@@ -681,7 +643,7 @@ xhttp.onreadystatechange = function() {
             }
         };// koniec f. vs()
 
-        
+        // --- plugging event listener on compare button ---
         const compareBtn = document.getElementById("compareBtn");
         compareBtn.addEventListener("click", vs, false); 
     }
@@ -689,7 +651,7 @@ xhttp.onreadystatechange = function() {
 xhttp.open("GET", "db.json", true);
 xhttp.send();
 
-//-------------rozszerzenia prototypów tablic-----------------
+// --- polyfill: Array ---
 Array.prototype.contains = function(v) {
     for(let i = 0; i < this.length; i++) {
         if(this[i] === v) return true;
@@ -706,11 +668,3 @@ Array.prototype.unique = function() {
     }
     return arr;
 };
-
-//-------------rozszerzenia prototypów-------------------------
-//polyfill dla przeglądarek nie obsługujących closest
-if (!Element.prototype.remove) {
-    Element.prototype.remove = function() {
-        this.parentElement.removeChild(this);
-    }
-}
