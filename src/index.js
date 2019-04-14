@@ -10,13 +10,14 @@ import './style.scss';
 // - uzależnić od indexu
 // -->
 
+let lang = "en";
+
 const xhttp = new XMLHttpRequest();
 xhttp.onreadystatechange = function() {
     if (this.readyState == 4 && this.status == 200) {
         const response = JSON.parse(xhttp.responseText);
         const raceInfo = response.raceInfo;
 
-        //console.info("race INFO", raceInfo);
         //=============diagnostyka danych z rajdami===================
         function dataCheck() {
             let nrOfCorrectRaces = 0;
@@ -29,11 +30,9 @@ xhttp.onreadystatechange = function() {
                     console.error("Błędny index " + i + " Rok " + raceInfo[i].year + " rajd " + raceInfo[i].race)
                 }
             }
-            //console.log("--------------------\n" + nrOfCorrectRaces + " poprawnych rajdów\n" + "--------------------");
         }
 
         dataCheck();
-
 
         //---------deklaracja funkcji odpowiedzialnej za wyświetlanie wyników w konsoli
         const drawResults = function(rYear, rRace, rPosition, rCompetitor) {
@@ -41,7 +40,6 @@ xhttp.onreadystatechange = function() {
                 console.info(rPosition + " miejsce: " + rCompetitor);
             }
         };
-
 
         //---------tablica zbierająca z każdego rajdu liczbę uczestników ---------
         let howMany = [];
@@ -51,11 +49,9 @@ xhttp.onreadystatechange = function() {
             console.log(el.year + "#" + el.race + " startowało: " + el.position.length);
         });
 
-
         //---------sprawdzamy maksymalną liczbę uczestników------------------------
         const mostCompetitors = Math.max(...howMany);
         console.info("%cRekordowa liczba uczestników: " + mostCompetitors, "font-weight: 700;");
-
 
         //----------pętle wywołujące funkcję wyświetlającą wyniki w konsoli---------   
         const drawingResultsLoops = function () {
@@ -91,93 +87,53 @@ xhttp.onreadystatechange = function() {
 
         //------------pobranie selectów i innych elementów strony --------------
         const selects = document.getElementsByTagName("select");
-        // const selectedOption1 = selects[0].options[selects[0].selectedIndex];
-        // const selectedOption2 = selects[1].options[selects[1].selectedIndex];
-
 
         //-----------dodanie nasłuchu do selectów-----------------------
         for (let i = 0; i < selects.length; i++) {
             selects[i].addEventListener("blur", function() {
-                //let who = this.options[this.selectedIndex].value;
-
                 let context = this;
-                //console.error('Wybrałeś: ' + this.options[this.selectedIndex].value);
                 showSelectedTruckerAndDisplayStats(context, i);
-
                 clearingComparison();
 
-                //console.log(this);
                 if (this.id === "firstSelect") {
-                    //console.log("trzeba wywołać dodatkową funkcję do stworzenia listy oponentów");
+                    //--- trzeba wywołać dodatkową funkcję do stworzenia listy oponentów ---
                     prepareSecondSelect();
                 }
             });
         }
 
-        for (let i = 0; i < selects.length; i++) {
-            selects[i].addEventListener("change", function() { //do zrobienia: DRY
-                //let who = this.options[this.selectedIndex].value;
-
+        for (let i = 0; i < selects.length; i++) { // to do: DRY
+            selects[i].addEventListener("change", function() {
                 let context = this;
-                //console.error('Wybrałeś: ' + this.options[this.selectedIndex].value);
                 showSelectedTruckerAndDisplayStats(context, i);
-
                 clearingComparison();
 
-                //console.log(this);
                 if (this.id === "firstSelect") {
-                    //console.log("trzeba wywołać dodatkową funkcję do stworzenia listy oponentów");
                     prepareSecondSelect();
                 }
             });
         }
 
-
-        //------------tworzymy tablicę ze wszystkich pojedyńczych występów na rajdzie-------------------
-        
+        //--- tworzymy tablicę ze wszystkich pojedyńczych występów na rajdzie---
         let competitorsToSelect = [];
         for (let i = 0; i < raceInfo.length; i++) {
             competitorsToSelect = competitorsToSelect.concat(raceInfo[i].competitors);
-            //console.info("pętla nr " + i + ", dodani uczestnicy " + raceInfo[i].competitors);
         }
-        //console.info("competitorsToSelect " + competitorsToSelect);
         
-        //-------pozostawienie unikatów z tablicy competitorsToSelect za pomocą roszerzeń prototypu tablic, posortowanie----------------------
-
+        //--- pozostawienie unikatów z tablicy competitorsToSelect za pomocą roszerzeń prototypu tablic, posortowanie ---
         const uniques = competitorsToSelect.unique().sort();
-            
-        //console.log("Zawodnicy do wyboru: " + uniques + " Jest " + uniques.length + " zawodników do wyboru.");
-
         addingSelects(uniques, 0); //wypełnienie firstSelect kierowcami z tablicy uniques
-
 
         /*------------funkcja do wyświetlania statystyk pierwszego zawodnika i... generująca opcje wyboru do drugiego selecta (warto wydzielić)---------*/
         const showSelectedTruckerAndDisplayStats = function showSelectedTruckerAndDisplayStats(context, indexOfSelect) {
-                //console.log("startujemy");
-                //let who = context.options[context.selectedIndex].value;
-                //var select = document.getElementById("firstSelect");
                 let select = context;
                 let selectedOption = select.options[select.selectedIndex];
                 const selectedText   = selectedOption.text;  // 'dane'
-                //const selectedValue  = selectedOption.value; // 'wartość'"
-                //console.log(">>>>>>" + who, selectedText, selectedValue);
-            
-                // const showSelect = function showSelect() {
-                //      console.log("Wybrano zawodnika " + selectedText);
-                // };
-                // showSelect();
                 const statsTableBody = document.querySelector("#selected-truckers-stats tbody");
                 statsTableBody.classList.add("open");
             
                 //------statsDisplay---------
                 const showMeStats = function showMeStats(raceInfo) {
-
-                    //var raceInfo = raceInfo;
-                    //console.warn("Czy przekazał zawodnika? " + selectedText);
-                    //console.error("Czy przekazał rajdy? " + raceInfo);
-
-
-                    //--------------pętla zliaczająca pozycje do statystyk----------
                     let absent = 0;
                     let winner = 0;
                     let second = 0;
@@ -185,19 +141,14 @@ xhttp.onreadystatechange = function() {
                     let podium = 0;
                     let furtherPlaces = 0;
                     let competed = 0;
-                    //let frequency = 0;
                     let miejsca = [];
                     let numOfParticipants = [];
                     let posPerContestants = [];
                     let winsAgainstOthersTab = [];
                     let winsTabLength = winsAgainstOthersTab.length;
-                    
 
+                    //--- pętla zliaczająca pozycje do statystyk ---
                     for (let i = 0; i < raceInfo.length; i++) {
-                        //console.log("W pętli " + raceInfo[i].position);
-                        // console.log(selectedText);
-                        // var raceInfo = raceInfo;
-                        // var i = i;
                         let raceNr = i + 1;
                         let chosenIndex = raceInfo[i].competitors.indexOf(selectedText);
                         let positionToPush = raceInfo[i].position[chosenIndex];
@@ -233,36 +184,28 @@ xhttp.onreadystatechange = function() {
                             absent++;
                         }
                         else {
-                            //console.log("Wybrany zawodnik: " + selectedText);
-                            //console.warn(`Rajd ${raceNr}: dalsze miejsce :( ${raceInfo[i].position[chosenIndex]} na ${raceInfo[i].position.length}`);
                             furtherPlaces++;
                             competed++;
                         }
                     }
                     
-                    //-------statystyki procentowe wyliczane po warunkach zliczających----
-
+                    //--- statystyki procentowe wyliczane po warunkach zliczających ---
                     let frequency = competed/raceInfo.length*100;
                     let winsPct = winner/competed*100;
                     let podiumPct = podium/competed*100;
                     
                     let fSumOfComp = function su(numOfParticipants) {
                         let sumOfComp = 0;
-
                         for(let i = 0; i < numOfParticipants.length; i++) { 
                             sumOfComp = sumOfComp + parseInt(numOfParticipants[i]); 
-                            // console.warn("wewnetrzny Test funkcji su " + sumOfComp);
                         }
-                        //console.error("Czy poza petlą jest co przekazać? " + sumOfComp);
                         return sumOfComp; 
                     };
                     
                     let fSumOfPos = function suma(miejsca) {
                         let sumOfPos = 0;
-
                         for(let i = 0; i < miejsca.length; i++) { 
                             sumOfPos = sumOfPos + parseInt(miejsca[i]); 
-                            //console.error("Test funkcji suma " + sumOfPos + " wsad: " + miejsca);
                         }
                         return sumOfPos; 
                     };
@@ -270,7 +213,6 @@ xhttp.onreadystatechange = function() {
 
                     let per = function per(fSumOfPos, fSumOfComp) {
                         let positionPerNumOfCompetitors = fSumOfPos(miejsca)/fSumOfComp(numOfParticipants);
-                        
                         return positionPerNumOfCompetitors;
                     };
 
@@ -284,13 +226,10 @@ xhttp.onreadystatechange = function() {
 
                     let winsRate = function(winsAgainstOthersTab, winsTabLength) {
                         let winsRateSum  = winsAgainstOthersTab.reduce( (prev, cur) => {
-                            //console.log("WINS RATE------------------", winsAgainstOthersTab, winsTabLength)
                             return prev + cur;
                         });
-
                         return winsRateSum / winsTabLength;
                     }
-
 
                     let indexOfStatsContainer = 1 + indexOfSelect;
                     let nameOfStatsPrefix = "st".concat(indexOfStatsContainer, "-");
@@ -306,7 +245,6 @@ xhttp.onreadystatechange = function() {
                     let statsAgainstOthersId = nameOfStatsPrefix.concat("against-others");
                     let raceContainerNr = "race-by-race" + indexOfStatsContainer;  
                     
-                    //const statsDisplay = document.getElementById(nameOfStatsContainer);
                     const statsCompeted = document.getElementById(statsCompetedId);
                     const statsFrequency = document.getElementById(statsFrequencyId);
                     const statsWinner = document.getElementById(statsWinnerId);
@@ -317,33 +255,12 @@ xhttp.onreadystatechange = function() {
                     const statsPodiumPct = document.getElementById(statsPodiumPctId);
                     const statsFurtherPlaces = document.getElementById(statsFurtherPlacesId);
                     const statsAgainstOthers = document.getElementById(statsAgainstOthersId);
-                    // const st = "<div class=\"row no-gutters\"><div class=\"col-sm-7\">";
-                    // const mid = "</div><div class=\"col-sm-5\">";
-                    // const end = "</div></div>";
 
                     const chart = 
                         `<svg viewBox="0 0 64 64" class="pie">
                             <circle r="25%" cx="50%" cy="50%" style="stroke-dasharray: ${winsRate(winsAgainstOthersTab, winsTabLength).toFixed(3)*100}, 100; stroke-dashoffset: 0; animation-delay: .2s">
                             </circle>
                         </svg>`;
-
-                    //   ${st} nie startował ${mid} ${absent} ${end}  
-                    //   ${st} pozycja na liczbę startujących ${mid} <span>${per(fSumOfPos, fSumOfComp).toFixed(3)}</span> ${chart}${end}
-                    
-                    // statsDisplay.innerHTML = 
-                    //     `${st} wystartował ${mid} ${competed} x&#127937;${end}
-                    //     ${st} frekwencja ${mid} ${frequency.toFixed(3)} % ${end}
-                    //     ${st} pierwszy ${mid} ${winner} ${onceOrMore(winner, "&#129351;")}${end}
-                    //     ${st} drugi ${mid} ${second} ${onceOrMore(winner, "&#129352;")}${end}
-                    //     ${st} trzeci ${mid} ${third} ${onceOrMore(winner, "&#129353;")}${end} 
-                    //     ${st} na podium ${mid} ${podium} ${end}
-                    //     ${st} procent wygranych ${mid} ${winsPct.toFixed(3)} % ${end}
-                    //     ${st} procent na podium ${mid} ${podiumPct.toFixed(3)} % ${end}
-                    //     ${st} dalsze miejsce ${mid} ${furtherPlaces} ${end} 
-                    //     ${st} % wygranych przeciwko innym startującym ${mid} ${winsRate(winsAgainstOthersTab, winsTabLength).toFixed(3)} ${chart}${end} 
-                    //     <div class=\"row no-gutters\"><div class=\"col-sm-9\">rajd po rajdzie (miejsce/liczba startujących)</div>
-                    //     <div class=\"col-sm-3\"><button class=\"btn btn-secondary btn-sm\" type=\"button\" data-toggle=\"collapse\" data-target=\"#${raceContainerNr}\" aria-expanded=\"false\" aria-controls=\"${raceContainerNr}\">Show/hide</button></div>
-                    //     <div class=\"collapse\" id=\"${raceContainerNr}\"> ${posPerContestants}</div>`;
 
                     statsCompeted.innerText = competed;
                     statsFrequency.innerText = `${frequency.toFixed(3)}%`;
@@ -368,7 +285,6 @@ xhttp.onreadystatechange = function() {
                     let newElOption = null;
                     newElOption = document.createElement("option");
                     newElOption.innerHTML = truckersTab[i];
-                    //console.warn(selects[selectToFill]);
 
                     mySelect = selects[selectToFill];
                     mySelect.appendChild(newElOption);
@@ -381,15 +297,12 @@ xhttp.onreadystatechange = function() {
         function truckersToCompare() {
             let selectedOption = selects[0].options[selects[0].selectedIndex];
             let selectedText = selectedOption.text;
-            //let idOfSelected = uniques.indexOf(selectedText);
             let avilableToCompare =[];
             avilableToCompare = uniques.filter(function(el) {
                 return el != selectedOption.text;
             });
             return avilableToCompare;
         }
-        //console.log("Sprawdzam możliwości porównania: " + truckersToCompare());
-
 
         //-----------------dodanie optionow do drugiego selecta-----------
         const prepareSecondSelect = function () {
@@ -408,7 +321,6 @@ xhttp.onreadystatechange = function() {
             compareContainer.innerHTML = "";
         };
 
-        
         /*--------- funkcja do porównywania wyników zawodników - wymaga sprawdzenia-------------------*/
         const vs = function() {
             const compareDisplay = document.getElementById("comparison");
@@ -430,7 +342,7 @@ xhttp.onreadystatechange = function() {
                 let chartPoints2 = "";
                 let chartPointsNrOfDrivers = "";
                 let oneRaceWidth = window.innerWidth / raceInfo.length;
-                let svgHeight = 200;
+                let svgHeight = 160;
                 // --- markers arrays ---
                 let positionPoint1MarkerTab = [];
                 let positionPoint2MarkerTab = [];
@@ -477,7 +389,7 @@ xhttp.onreadystatechange = function() {
                         tooltip.setAttribute("style", cordinates);
                         tooltip.setAttribute("data-who", who);
                         tooltip.setAttribute("data-id", i);
-                        tooltip.innerText = `Na rajdzie ${raceInfo[i].series}#${raceInfo[i].race}/${raceInfo[i].year} ${who} zajął ${whoPos} miejsce (na ${numberOfCompetitors} startujących)`;
+                        tooltip.innerText = `On the race ${raceInfo[i].series}#${raceInfo[i].race}/${raceInfo[i].year} ${who} took ${whoPos} place (out of ${numberOfCompetitors} participants)`;
                         chartWrapper.appendChild(tooltip);
                     }
 
@@ -511,33 +423,14 @@ xhttp.onreadystatechange = function() {
                         positionPoint2MarkerTab.push(null);
                     }
 
-                    // if (raceInfo[i].position[who1Id] !== undefined || raceInfo[i].position[who2Id] !== undefined) {
-                    //     console.group();
-                    //     console.warn(who1 + " vs " + who2);
-                    //     console.log("Race#" + raceCounter + " (" + raceInfo[i].year + " #" + raceInfo[i].race + ")");
-                        // if (raceInfo[i].position[who1Id] === undefined) {
-                        //     console.log(who1 + " nie startował, a " + who2 + " był " + raceInfo[i].position[who2Id]);
-                        //     let result1 = document.createElement("div");
-                        //     result1.classList.add("col-sm-12", "bg-dark", "text-light");
-                        //     result1.innerText += `Na ${raceInfo[i].race} rajdzie w ${raceInfo[i].year} ${who1} nie startował, a ${who2} był ${raceInfo[i].position[who2Id]}`;
-                        //     compareDisplay.appendChild(result1);
-                        // }
-                        // else if (raceInfo[i].position[who2Id] === undefined) {
-                        //     console.log(who1 + " był " + raceInfo[i].position[who1Id] + ", a " + who2 + " nie startował.");
-                        //     let result1 = document.createElement("div");
-                        //     result1.classList.add("col-sm-12", "bg-dark", "text-light");
-                        //     result1.innerText += `Na ${raceInfo[i].race} rajdzie w ${raceInfo[i].year} ${who2} nie startował, a ${who1} był ${raceInfo[i].position[who1Id]}`;
-                        //     compareDisplay.appendChild(result1);
-                        // }
-                        // else {
-                        //     console.log(who1 + " był " + raceInfo[i].position[who1Id] + ", a " + who2 + " był " + raceInfo[i].position[who2Id]);
-                        //     let result1 = document.createElement("div");
-                        //     result1.classList.add("col-sm-12", "bg-dark", "text-light");
-                        //     result1.innerText += `Na ${raceInfo[i].race} rajdzie w ${raceInfo[i].year} ${who1} był ${raceInfo[i].position[who1Id]}, a ${who2} był ${raceInfo[i].position[who2Id]}`;
-                        //     compareDisplay.appendChild(result1);
-                        // }
-                    //     console.groupEnd();
-                    // }
+                    // --- vertical race indicators on chart ---
+                    let raceLine = document.createElementNS("http://www.w3.org/2000/svg", "line");
+                    raceLine.classList.add("race-line");
+                    raceLine.setAttribute("x1", milage);
+                    raceLine.setAttribute("x2", milage);
+                    raceLine.setAttribute("y1", 0);
+                    raceLine.setAttribute("y2", 160);
+                    chartBg.appendChild(raceLine);
 
                     // --- score calculator ---
                     if (who1Pos && who2Pos !== undefined) {
@@ -587,7 +480,7 @@ xhttp.onreadystatechange = function() {
                             positionPointMarker.classList.add(cssClass);
                             chartBg.appendChild(positionPointMarker);
                         } else {
-                            console.log("Zawodnik nie startował");
+                            console.log("DNS");
                         }
                     }
                     tab.forEach(drawSingleMarker);
@@ -607,12 +500,12 @@ xhttp.onreadystatechange = function() {
 
                 // --- markup for show driver comparison ---
                 let h2hStat = document.createElement("div");
-                h2hStat.classList.add("col-sm-12", "bg-dark", "text-light");
+                h2hStat.classList.add("row", "text-light", "text-center", "bd-dark");
                 h2hStat.innerHTML =
-                    `<section class=\"row\"><div class=\"col-sm-12 bg-dark text-light\"><strong>Head to head</strong><br>
-                        ${who1} był wyżej ${who1Score} <br>
-                        ${who2} był wyżej ${who2Score} <br>
-                        remis był: ${draw} </section></div>`;
+                    `<div class=\"col-sm-12 bg-dark text-light\"><strong>Head to head</strong><br>
+                        ${who1} took a higher place ${who1Score}<br>
+                        ${who2} took a higher place ${who2Score}<br>
+                        draw był: ${draw}</div>`;
                 compareDisplay.insertBefore(h2hStat, compareDisplay.firstChild);
 
                 // --- wstawiamy wykres po sekcji porównywania ---
