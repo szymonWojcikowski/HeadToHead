@@ -5,7 +5,7 @@ module.exports = {
     entry: "./src/index.js",
     output: {
         filename: "index.js",
-        path: path.resolve(__dirname, 'out'),
+        path: path.resolve(__dirname, ""),
         publicPath: "/"
     },
     devServer: {
@@ -15,8 +15,6 @@ module.exports = {
         historyApiFallback: true
     },
     mode: 'production',
-    watch: true,
-    // devtool: "source-map",
     module: {
         rules: [
             {
