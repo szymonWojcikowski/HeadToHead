@@ -166,6 +166,8 @@ xhttp.onreadystatechange = function() {
                 //      console.log("Wybrano zawodnika " + selectedText);
                 // };
                 // showSelect();
+                const statsTableBody = document.querySelector("#selected-truckers-stats tbody");
+                statsTableBody.classList.add("open");
             
                 //------statsDisplay---------
                 const showMeStats = function showMeStats(raceInfo) {
@@ -206,11 +208,9 @@ xhttp.onreadystatechange = function() {
                         if (positionToPush != undefined) {
                             miejsca.push(positionToPush);
                             numOfParticipants.push(numOfParticipantsToPush);
-                            /*--new--*/
                             let posPerCont = "";
                             posPerCont += " (Race " + raceNr + ": " + positionToPush + "/" + numOfParticipantsToPush + ")";
                             posPerContestants.push(posPerCont);
-                            //   ======
                             winsAgainstOthersTab.push(winsAgainstOthersRate);
                         }
 
@@ -293,13 +293,33 @@ xhttp.onreadystatechange = function() {
 
 
                     let indexOfStatsContainer = 1 + indexOfSelect;
-                    let nameOfStatsContainer = "stats" + indexOfStatsContainer;
+                    let nameOfStatsPrefix = "st".concat(indexOfStatsContainer, "-");
+                    let statsCompetedId = nameOfStatsPrefix.concat("competed");
+                    let statsFrequencyId = nameOfStatsPrefix.concat("frequency");
+                    let statsWinnerId = nameOfStatsPrefix.concat("winner");
+                    let statsSecondId = nameOfStatsPrefix.concat("second");
+                    let statsThirdId = nameOfStatsPrefix.concat("third");
+                    let statsPodiumId = nameOfStatsPrefix.concat("podium");
+                    let statsWinsPctId = nameOfStatsPrefix.concat("wins-pct");
+                    let statsPodiumPctId = nameOfStatsPrefix.concat("podium-pct");
+                    let statsFurtherPlacesId = nameOfStatsPrefix.concat("further-places");
+                    let statsAgainstOthersId = nameOfStatsPrefix.concat("against-others");
                     let raceContainerNr = "race-by-race" + indexOfStatsContainer;  
                     
-                    const statsDisplay = document.getElementById(nameOfStatsContainer);
-                    const st = "<div class=\"row no-gutters\"><div class=\"col-sm-7\">";
-                    const mid = "</div><div class=\"col-sm-5\">";
-                    const end = "</div></div>";
+                    //const statsDisplay = document.getElementById(nameOfStatsContainer);
+                    const statsCompeted = document.getElementById(statsCompetedId);
+                    const statsFrequency = document.getElementById(statsFrequencyId);
+                    const statsWinner = document.getElementById(statsWinnerId);
+                    const statsSecond = document.getElementById(statsSecondId);
+                    const statsThird = document.getElementById(statsThirdId);
+                    const statsPodium = document.getElementById(statsPodiumId);
+                    const statsWinsPct = document.getElementById(statsWinsPctId);
+                    const statsPodiumPct = document.getElementById(statsPodiumPctId);
+                    const statsFurtherPlaces = document.getElementById(statsFurtherPlacesId);
+                    const statsAgainstOthers = document.getElementById(statsAgainstOthersId);
+                    // const st = "<div class=\"row no-gutters\"><div class=\"col-sm-7\">";
+                    // const mid = "</div><div class=\"col-sm-5\">";
+                    // const end = "</div></div>";
 
                     const chart = 
                         `<svg viewBox="0 0 64 64" class="pie">
@@ -310,20 +330,31 @@ xhttp.onreadystatechange = function() {
                     //   ${st} nie startował ${mid} ${absent} ${end}  
                     //   ${st} pozycja na liczbę startujących ${mid} <span>${per(fSumOfPos, fSumOfComp).toFixed(3)}</span> ${chart}${end}
                     
-                    statsDisplay.innerHTML = 
-                        `${st} wystartował ${mid} ${competed} x&#127937;${end}
-                        ${st} frekwencja ${mid} ${frequency.toFixed(3)} % ${end}
-                        ${st} pierwszy ${mid} ${winner} ${onceOrMore(winner, "&#129351;")}${end}
-                        ${st} drugi ${mid} ${second} ${onceOrMore(winner, "&#129352;")}${end}
-                        ${st} trzeci ${mid} ${third} ${onceOrMore(winner, "&#129353;")}${end} 
-                        ${st} na podium ${mid} ${podium} ${end}
-                        ${st} procent wygranych ${mid} ${winsPct.toFixed(3)} % ${end}
-                        ${st} procent na podium ${mid} ${podiumPct.toFixed(3)} % ${end}
-                        ${st} dalsze miejsce ${mid} ${furtherPlaces} ${end} 
-                        ${st} % wygranych przeciwko innym startującym ${mid} ${winsRate(winsAgainstOthersTab, winsTabLength).toFixed(3)} ${chart}${end} 
-                        <div class=\"row no-gutters\"><div class=\"col-sm-9\">rajd po rajdzie (miejsce/liczba startujących)</div>
-                        <div class=\"col-sm-3\"><button class=\"btn btn-secondary btn-sm\" type=\"button\" data-toggle=\"collapse\" data-target=\"#${raceContainerNr}\" aria-expanded=\"false\" aria-controls=\"${raceContainerNr}\">Show/hide</button></div>
-                        <div class=\"collapse\" id=\"${raceContainerNr}\"> ${posPerContestants}</div>`;
+                    // statsDisplay.innerHTML = 
+                    //     `${st} wystartował ${mid} ${competed} x&#127937;${end}
+                    //     ${st} frekwencja ${mid} ${frequency.toFixed(3)} % ${end}
+                    //     ${st} pierwszy ${mid} ${winner} ${onceOrMore(winner, "&#129351;")}${end}
+                    //     ${st} drugi ${mid} ${second} ${onceOrMore(winner, "&#129352;")}${end}
+                    //     ${st} trzeci ${mid} ${third} ${onceOrMore(winner, "&#129353;")}${end} 
+                    //     ${st} na podium ${mid} ${podium} ${end}
+                    //     ${st} procent wygranych ${mid} ${winsPct.toFixed(3)} % ${end}
+                    //     ${st} procent na podium ${mid} ${podiumPct.toFixed(3)} % ${end}
+                    //     ${st} dalsze miejsce ${mid} ${furtherPlaces} ${end} 
+                    //     ${st} % wygranych przeciwko innym startującym ${mid} ${winsRate(winsAgainstOthersTab, winsTabLength).toFixed(3)} ${chart}${end} 
+                    //     <div class=\"row no-gutters\"><div class=\"col-sm-9\">rajd po rajdzie (miejsce/liczba startujących)</div>
+                    //     <div class=\"col-sm-3\"><button class=\"btn btn-secondary btn-sm\" type=\"button\" data-toggle=\"collapse\" data-target=\"#${raceContainerNr}\" aria-expanded=\"false\" aria-controls=\"${raceContainerNr}\">Show/hide</button></div>
+                    //     <div class=\"collapse\" id=\"${raceContainerNr}\"> ${posPerContestants}</div>`;
+
+                    statsCompeted.innerText = competed;
+                    statsFrequency.innerText = `${frequency.toFixed(3)}%`;
+                    statsWinner.innerHTML = `${winner} ${onceOrMore(winner, "&#129351;")}`;
+                    statsSecond.innerHTML = `${second} ${onceOrMore(winner, "&#129352;")}`;
+                    statsThird.innerHTML = `${third} ${onceOrMore(winner, "&#129353;")}`;
+                    statsPodium.innerText = podium;
+                    statsWinsPct.innerText = `${winsPct.toFixed(3)}%`;
+                    statsPodiumPct.innerText = `${podiumPct.toFixed(3)}%`;
+                    statsFurtherPlaces.innerText = furtherPlaces;
+                    statsAgainstOthers.innerHTML = `<span class="wins-rate">${winsRate(winsAgainstOthersTab, winsTabLength).toFixed(3)} ${chart}</span>`;
                 };
 
                 showMeStats(raceInfo);
