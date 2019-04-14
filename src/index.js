@@ -378,8 +378,8 @@ xhttp.onreadystatechange = function() {
 
                     let y1 = positionPerCompetitors1 * numberOfCompetitors * 10;
                     let y2 = positionPerCompetitors2 * numberOfCompetitors * 10;
-                    let cordinates1 = `left: ${milage+5}px; top: ${y1+5}px;`;
-                    let cordinates2 = `left: ${milage+5}px; top: ${y2+5}px;`;
+                    let cordinates1 = milage < 600 ? `left: ${milage+7}px; top: ${y1+7}px;` : `left: ${milage-300-7}px; top: ${y1+7}px;`;
+                    let cordinates2 = milage < 600 ? `left: ${milage+5}px; top: ${y2+5}px;` : `left: ${milage-300-5}px; top: ${y2+5}px;`;
 
                     // --- creating&add tooltips --- 
                     function genTooltip(who, cordinates, whoPos) {
@@ -505,7 +505,7 @@ xhttp.onreadystatechange = function() {
                     `<div class=\"col-sm-12 bg-dark text-light\"><strong>Head to head</strong><br>
                         ${who1} took a higher place ${who1Score}<br>
                         ${who2} took a higher place ${who2Score}<br>
-                        draw był: ${draw}</div>`;
+                        draw: ${draw}</div>`;
                 compareDisplay.insertBefore(h2hStat, compareDisplay.firstChild);
 
                 // --- wstawiamy wykres po sekcji porównywania ---

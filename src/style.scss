@@ -51,6 +51,8 @@
     height: 160px;
 
     .tip {
+        display: inline-block;
+        width: 300px;
         line-height: 1rem;
         font-size: 1rem;
         transition: all .4s;
@@ -194,8 +196,10 @@
 }
 
 #comparison {
-    padding-top: .5rem;
     .row {
         margin: 0;
+        .bg-dark {
+            padding-top: .5rem;
+        }
     }
 }
