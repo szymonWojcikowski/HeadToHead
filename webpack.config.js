@@ -14,9 +14,9 @@ module.exports = {
         port: 3001,
         historyApiFallback: true
     },
-    mode: 'development',
+    mode: 'production',
     watch: true,
-    devtool: "source-map",
+    // devtool: "source-map",
     module: {
         rules: [
             {

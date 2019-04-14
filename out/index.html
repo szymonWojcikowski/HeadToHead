@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Head2Head App v.2.0</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+</head>
+<body>
+    <div class="container">
+    <header class="row">
+        <div class="col-md-12">
+        <h1 class="text-center text-secondary">Head 2 Head</h1>
+        <h2 class="text-center text-warning">Lego truckers's comparison</h2>
+        <div class="alert alert-warning alert-dismissible" role="alert">
+            <code><strong>How to:</strong> Select a first trucker. U will see his stats (total number of races, number of wins, second, and third places, percentage of wins). Now choose his oponent. You will see his stats also. Now click "compare" button. You will see a results of direct duels (such total namber of wins, loss and draws, percentage of direct wins).</code> 
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            </div>
+        </div>
+    </header>
+    <section id="stats">
+        <table id="selected-truckers-stats">
+            <thead>
+                <tr class="row">
+                    <th class="col-sm-4 bg-secondary">
+                        <div class="form-group">
+                            <label for="firstSelect" class="text-white">Select a trucker</label>
+                            <select class="form-control" id="firstSelect">
+                <!--options generated via js -->
+                            </select>
+                        </div>
+                    </th>
+                    <th class="col-sm-4 vs">vs.</th>
+                    <th class="col-sm-4 bg-danger">
+                        <div class="form-group">
+                            <label for="selectToCompare" class="text-light">...and choose his contestant</label>
+                            <select class="form-control" id="selectToCompare">
+                <!--options generated via js -->
+                            </select>
+                        </div>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="row"><td id="st1-competed" class="stats1 col-sm-4"></td><th class="col-sm-4">competed</th><td id="st2-competed" class="stats2 col-sm-4"></td></tr>
+                <tr class="row"><td id="st1-frequency" class="stats1 col-sm-4"></td><th class="col-sm-4">frequency</th><td id="st2-frequency" class="stats2 col-sm-4"></td></tr>
+                <tr class="row"><td id="st1-winner" class="stats1 col-sm-4"></td><th class="col-sm-4">winner</th><td id="st2-winner" class="stats2 col-sm-4"></td></tr>
+                <tr class="row"><td id="st1-second" class="stats1 col-sm-4"></td><th class="col-sm-4">second</th><td id="st2-second" class="stats2 col-sm-4"></td></tr>
+                <tr class="row"><td id="st1-third" class="stats1 col-sm-4"></td><th class="col-sm-4">third</th><td id="st2-third" class="stats2 col-sm-4"></td></tr> 
+                <tr class="row"><td id="st1-podium" class="stats1 col-sm-4"></td><th class="col-sm-4">podium</th><td id="st2-podium" class="stats2 col-sm-4"></td></tr>
+                <tr class="row"><td id="st1-wins-pct" class="stats1 col-sm-4"></td><th class="col-sm-4">wins percentage</th><td id="st2-wins-pct" class="stats2 col-sm-4"></td></tr>
+                <tr class="row"><td id="st1-podium-pct" class="stats1 col-sm-4"></td><th class="col-sm-4">percentage on the podium</th><td id="st2-podium-pct" class="stats2 col-sm-4"></td></tr>
+                <tr class="row"><td id="st1-further-places" class="stats1 col-sm-4"></td><th class="col-sm-4">further places</th><td id="st2-further-places" class="stats2 col-sm-4"></td></tr> 
+                <tr class="row"><td id="st1-against-others" class="stats1 col-sm-4"></td><th class="col-sm-4">% of wins against other competitors</th><td id="st2-against-others" class="stats2 col-sm-4"></td></tr>
+            </tbody>
+        </table>
+    </section>
+    <section id="comparison">  
+        <!-- <div class="row text-center">
+        </div> -->
+    </section>
+    <section class="row">
+            <div class="col-sm-12 card-body text-center">
+            <button type="button" class="btn btn-lg btn-success" id="compareBtn">Compare</button>
+        </div>
+    </section>
+    </div>
+<!----------------bootstrap4 i jego pomocnicy--------------->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="./src/db.js"></script> 
+ <script type="text/javascript" src="/index.js"></script></body>
+</html>  
