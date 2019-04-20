@@ -1,14 +1,15 @@
 import './style.scss';
 
-// <!------------------to Do------------------------------->
-// <!--
+// ================to Do================>
+
 // 1) sorting of options in select abcd DONE
-// 2) languages
+// 2) multi-languages
 // 3) avatars for truckers
-// 4) wywołanie f. showPosition z argumentem (nr rajdu), którego nie ma wysypuje kod (trzeba dodać obsługę błędów) DONE
-// 5) przerobienie wypisu statystk z użyciem template strings i poprawienie adresacji odkrywanego guzikiem pola #racebyrace
-// - uzależnić od indexu
-// -->
+// 4) option filtering
+// 5) touch events (tooltips display on mobile)
+// 6) gruping stats by series & year
+// 7) history section: given race, given year
+
 
 let lang = "en";
 
@@ -18,7 +19,7 @@ xhttp.onreadystatechange = function() {
         const response = JSON.parse(xhttp.responseText);
         const raceInfo = response.raceInfo;
 
-        //=============diagnostyka danych z rajdami===================
+        //--- diagnostyka danych z rajdami ---
         function dataCheck() {
             let nrOfCorrectRaces = 0;
             for (let i = 0; i < raceInfo.length; i++) {
@@ -34,14 +35,14 @@ xhttp.onreadystatechange = function() {
 
         dataCheck();
 
-        //---------deklaracja funkcji odpowiedzialnej za wyświetlanie wyników w konsoli
+        //--- deklaracja funkcji odpowiedzialnej za wyświetlanie wyników w konsoli ---
         const drawResults = function(rYear, rRace, rPosition, rCompetitor) {
         if (rPosition !== undefined) {
                 console.info(rPosition + " miejsce: " + rCompetitor);
             }
         };
 
-        //---------tablica zbierająca z każdego rajdu liczbę uczestników ---------
+        //--- tablica zbierająca z każdego rajdu liczbę uczestników ---
         let howMany = [];
             
         raceInfo.forEach((el) => {
@@ -49,11 +50,11 @@ xhttp.onreadystatechange = function() {
             console.log(el.year + "#" + el.race + " startowało: " + el.position.length);
         });
 
-        //---------sprawdzamy maksymalną liczbę uczestników------------------------
+        //--- sprawdzamy maksymalną liczbę uczestników ---
         const mostCompetitors = Math.max(...howMany);
         console.info("%cRekordowa liczba uczestników: " + mostCompetitors, "font-weight: 700;");
 
-        //----------pętle wywołujące funkcję wyświetlającą wyniki w konsoli---------   
+        //--- pętle wywołujące funkcję wyświetlającą wyniki w konsoli ---   
         const drawingResultsLoops = function () {
             for (let i = 0; i < raceInfo.length; i++) {
                 console.log("%c" + raceInfo[i].year + " race#" + raceInfo[i].race, "font-size: 14px;");
@@ -67,7 +68,7 @@ xhttp.onreadystatechange = function() {
 
         drawingResultsLoops();
         
-        //------------------wyświetlanie pozycji zawodnika w konsoli------------
+        //--- wyświetlanie pozycji zawodnika w konsoli ---
         const showPosition = function(raceNr, who) {
             if (raceNr < raceInfo.length) {
                 let idWho = raceInfo[raceNr].competitors.indexOf(who);
@@ -85,10 +86,10 @@ xhttp.onreadystatechange = function() {
             }
         };
 
-        //------------pobranie selectów i innych elementów strony --------------
+        //--- pobranie selectów i innych elementów strony ---
         const selects = document.getElementsByTagName("select");
 
-        //-----------dodanie nasłuchu do selectów-----------------------
+        //--- dodanie nasłuchu do selectów ---
         for (let i = 0; i < selects.length; i++) {
             selects[i].addEventListener("blur", function() {
                 let context = this;
@@ -114,7 +115,7 @@ xhttp.onreadystatechange = function() {
             });
         }
 
-        //--- tworzymy tablicę ze wszystkich pojedyńczych występów na rajdzie---
+        //--- tworzymy tablicę ze wszystkich pojedyńczych występów na rajdzie ---
         let competitorsToSelect = [];
         for (let i = 0; i < raceInfo.length; i++) {
             competitorsToSelect = competitorsToSelect.concat(raceInfo[i].competitors);
@@ -124,7 +125,7 @@ xhttp.onreadystatechange = function() {
         const uniques = competitorsToSelect.unique().sort();
         addingSelects(uniques, 0); //wypełnienie firstSelect kierowcami z tablicy uniques
 
-        /*------------funkcja do wyświetlania statystyk pierwszego zawodnika i... generująca opcje wyboru do drugiego selecta (warto wydzielić)---------*/
+        /* --- funkcja do wyświetlania statystyk pierwszego zawodnika i... generująca opcje wyboru do drugiego selecta (warto wydzielić) ---*/
         const showSelectedTruckerAndDisplayStats = function showSelectedTruckerAndDisplayStats(context, indexOfSelect) {
                 let select = context;
                 let selectedOption = select.options[select.selectedIndex];
@@ -132,7 +133,7 @@ xhttp.onreadystatechange = function() {
                 const statsTableBody = document.querySelector("#selected-truckers-stats tbody");
                 statsTableBody.classList.add("open");
             
-                //------statsDisplay---------
+                //--- statsDisplay ---
                 const showMeStats = function showMeStats(raceInfo) {
                     let absent = 0;
                     let winner = 0;
@@ -277,7 +278,7 @@ xhttp.onreadystatechange = function() {
                 showMeStats(raceInfo);
             };
 
-        //--- sparametryzowane dodawanie selectów ---------------------
+        //--- sparametryzowane dodawanie selectów ---
         function addingSelects(truckersTab, selectToFill) {
             for(let i = 0; i < truckersTab.length; i++) {
                 function addOption(i) {
@@ -293,7 +294,7 @@ xhttp.onreadystatechange = function() {
             }
         }
 
-        //-----------------przygotowanie listy oponentów możliwych do porównania-----------
+        //--- przygotowanie listy oponentów możliwych do porównania ---
         function truckersToCompare() {
             let selectedOption = selects[0].options[selects[0].selectedIndex];
             let selectedText = selectedOption.text;
@@ -304,7 +305,7 @@ xhttp.onreadystatechange = function() {
             return avilableToCompare;
         }
 
-        //-----------------dodanie optionow do drugiego selecta-----------
+        //--- dodanie optionow do drugiego selecta ---
         const prepareSecondSelect = function () {
             const selectToClear = selects[1];
 
@@ -315,13 +316,13 @@ xhttp.onreadystatechange = function() {
             addingSelects(truckersToCompare(), 1); //--wypełnienie SelectoToCompare kierowcami z tablicy avilableToCompare
         };
 
-        //------------deklaracja wyrażenia funkcyjnego czyszczącego kontener porównania---------------
+        //--- deklaracja wyrażenia funkcyjnego czyszczącego kontener porównania ---
         const clearingComparison = function () {
             const compareContainer = document.getElementById("comparison");
             compareContainer.innerHTML = "";
         };
 
-        /*--------- funkcja do porównywania wyników zawodników - wymaga sprawdzenia-------------------*/
+        //--- funkcja do porównywania wyników zawodników ---
         const vs = function() {
             const compareDisplay = document.getElementById("comparison");
             if (compareDisplay.firstChild === null) {
@@ -358,7 +359,7 @@ xhttp.onreadystatechange = function() {
                 // --- chart wrapper injection ---
                 compareDisplay.appendChild(chartWrapper);
                 
-                //------------ calculate scores and charts ----------------
+                //--- calculate scores and charts ---
                 for (let i = 0; i < raceInfo.length; i++) {
                     let who1Id = raceInfo[i].competitors.indexOf(who1);//index danego kierowcy w tabeli uczestników danego rajdu[i]
                     let who2Id = raceInfo[i].competitors.indexOf(who2); //jw
@@ -503,9 +504,9 @@ xhttp.onreadystatechange = function() {
                 h2hStat.classList.add("row", "text-light", "text-center", "bd-dark");
                 h2hStat.innerHTML =
                     `<div class=\"col-sm-12 bg-dark text-light\"><strong>Head to head</strong><br>
-                        ${who1} took a higher place ${who1Score}<br>
-                        ${who2} took a higher place ${who2Score}<br>
-                        draw: ${draw}</div>`;
+                        ${who1} took a higher place ${who1Score} times<br>
+                        ${who2} took a higher place ${who2Score} times<br>
+                        draw was ${draw}</div>`;
                 compareDisplay.insertBefore(h2hStat, compareDisplay.firstChild);
 
                 // --- wstawiamy wykres po sekcji porównywania ---
