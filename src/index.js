@@ -217,7 +217,7 @@ xhttp.onreadystatechange = function() {
                     };
 
                     let onceOrMore = function(toEstimate, toDisplay) {
-                        if (toEstimate >= 1) {
+                        if (parseInt(toEstimate) >= 1) {
                             return ` x${toDisplay}`;
                         } else {
                             return "";
@@ -265,8 +265,8 @@ xhttp.onreadystatechange = function() {
                     statsCompeted.innerText = competed;
                     statsFrequency.innerText = `${frequency.toFixed(3)}%`;
                     statsWinner.innerHTML = `${winner} ${onceOrMore(winner, "&#129351;")}`;
-                    statsSecond.innerHTML = `${second} ${onceOrMore(winner, "&#129352;")}`;
-                    statsThird.innerHTML = `${third} ${onceOrMore(winner, "&#129353;")}`;
+                    statsSecond.innerHTML = `${second} ${onceOrMore(second, "&#129352;")}`;
+                    statsThird.innerHTML = `${third} ${onceOrMore(third, "&#129353;")}`;
                     statsPodium.innerText = podium;
                     statsWinsPct.innerText = `${winsPct.toFixed(3)}%`;
                     statsPodiumPct.innerText = `${podiumPct.toFixed(3)}%`;
