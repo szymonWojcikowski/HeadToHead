@@ -23,7 +23,6 @@ xhttp.onreadystatechange = function() {
         function dataCheck() {
             let nrOfCorrectRaces = 0;
             for (let i = 0; i < raceInfo.length; i++) {
-
                 if (raceInfo[i].competitors.length === raceInfo[i].position.length) {
                     nrOfCorrectRaces++;
                 }
@@ -34,6 +33,8 @@ xhttp.onreadystatechange = function() {
         }
 
         dataCheck();
+
+        console.info("Liczba rajdów w bazie: ", raceInfo.length);
 
         //--- deklaracja funkcji odpowiedzialnej za wyświetlanie wyników w konsoli ---
         const drawResults = function(rYear, rRace, rPosition, rCompetitor) {
@@ -62,7 +63,7 @@ xhttp.onreadystatechange = function() {
                 for (let j = 0; j < mostCompetitors; j++) {
                     drawResults(raceInfo[i].year, raceInfo[i].race, raceInfo[i].position[j], raceInfo[i].competitors[j]);
                 }
-                console.log("----------------");
+                console.log("%c----------------", "font-weight: 700;");
             }
         };
 
@@ -155,7 +156,6 @@ xhttp.onreadystatechange = function() {
                         let positionToPush = raceInfo[i].position[chosenIndex];
                         let numOfParticipantsToPush = raceInfo[i].position.length;
                         let winsAgainstOthersRate = (numOfParticipantsToPush - positionToPush)/(numOfParticipantsToPush - 1);
-                        winsTabLength = winsAgainstOthersTab.length;
                         
                         if (positionToPush != undefined) {
                             miejsca.push(positionToPush);
@@ -164,6 +164,7 @@ xhttp.onreadystatechange = function() {
                             posPerCont += " (Race " + raceNr + ": " + positionToPush + "/" + numOfParticipantsToPush + ")";
                             posPerContestants.push(posPerCont);
                             winsAgainstOthersTab.push(winsAgainstOthersRate);
+                            winsTabLength = winsAgainstOthersTab.length;
                         }
 
                         if (raceInfo[i].position[chosenIndex] == 1) {
@@ -312,8 +313,8 @@ xhttp.onreadystatechange = function() {
             while (selectToClear.firstChild) {
                 selectToClear.removeChild(selectToClear.firstChild);
             }
-
-            addingSelects(truckersToCompare(), 1); //--wypełnienie SelectoToCompare kierowcami z tablicy avilableToCompare
+            //--- wypełnienie SelectoToCompare kierowcami z tablicy avilableToCompare ---
+            addingSelects(truckersToCompare(), 1); 
         };
 
         //--- deklaracja wyrażenia funkcyjnego czyszczącego kontener porównania ---
@@ -325,6 +326,7 @@ xhttp.onreadystatechange = function() {
         //--- funkcja do porównywania wyników zawodników ---
         const vs = function() {
             const compareDisplay = document.getElementById("comparison");
+
             if (compareDisplay.firstChild === null) {
                 // --- first driver ---
                 let selectedOption1 = selects[0].options[selects[0].selectedIndex];
@@ -342,7 +344,7 @@ xhttp.onreadystatechange = function() {
                 let chartPoints1 = "";
                 let chartPoints2 = "";
                 let chartPointsNrOfDrivers = "";
-                let oneRaceWidth = window.innerWidth / raceInfo.length;
+                let oneRaceWidth = (compareDisplay.offsetWidth / raceInfo.length);
                 let svgHeight = 160;
                 // --- markers arrays ---
                 let positionPoint1MarkerTab = [];
@@ -541,7 +543,7 @@ xhttp.onreadystatechange = function() {
         const compareBtn = document.getElementById("compareBtn");
         compareBtn.addEventListener("click", vs, false); 
     }
-};
+};// end of xhttp.onreadystatechange
 xhttp.open("GET", "db.json", true);
 xhttp.send();
 
