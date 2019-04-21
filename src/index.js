@@ -23,7 +23,6 @@ xhttp.onreadystatechange = function() {
         function dataCheck() {
             let nrOfCorrectRaces = 0;
             for (let i = 0; i < raceInfo.length; i++) {
-
                 if (raceInfo[i].competitors.length === raceInfo[i].position.length) {
                     nrOfCorrectRaces++;
                 }
@@ -34,6 +33,8 @@ xhttp.onreadystatechange = function() {
         }
 
         dataCheck();
+
+        console.info("Liczba rajdów w bazie: ", raceInfo.length);
 
         //--- deklaracja funkcji odpowiedzialnej za wyświetlanie wyników w konsoli ---
         const drawResults = function(rYear, rRace, rPosition, rCompetitor) {
@@ -155,7 +156,6 @@ xhttp.onreadystatechange = function() {
                         let positionToPush = raceInfo[i].position[chosenIndex];
                         let numOfParticipantsToPush = raceInfo[i].position.length;
                         let winsAgainstOthersRate = (numOfParticipantsToPush - positionToPush)/(numOfParticipantsToPush - 1);
-                        winsTabLength = winsAgainstOthersTab.length;
                         
                         if (positionToPush != undefined) {
                             miejsca.push(positionToPush);
@@ -164,6 +164,7 @@ xhttp.onreadystatechange = function() {
                             posPerCont += " (Race " + raceNr + ": " + positionToPush + "/" + numOfParticipantsToPush + ")";
                             posPerContestants.push(posPerCont);
                             winsAgainstOthersTab.push(winsAgainstOthersRate);
+                            winsTabLength = winsAgainstOthersTab.length;
                         }
 
                         if (raceInfo[i].position[chosenIndex] == 1) {
@@ -342,7 +343,8 @@ xhttp.onreadystatechange = function() {
                 let chartPoints1 = "";
                 let chartPoints2 = "";
                 let chartPointsNrOfDrivers = "";
-                let oneRaceWidth = window.innerWidth / raceInfo.length;
+                // let oneRaceWidth = window.innerWidth / raceInfo.length;
+                let oneRaceWidth = (1140 / raceInfo.length) - 1;
                 let svgHeight = 160;
                 // --- markers arrays ---
                 let positionPoint1MarkerTab = [];
