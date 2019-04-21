@@ -326,6 +326,7 @@ xhttp.onreadystatechange = function() {
         //--- funkcja do porównywania wyników zawodników ---
         const vs = function() {
             const compareDisplay = document.getElementById("comparison");
+
             if (compareDisplay.firstChild === null) {
                 // --- first driver ---
                 let selectedOption1 = selects[0].options[selects[0].selectedIndex];
@@ -343,8 +344,7 @@ xhttp.onreadystatechange = function() {
                 let chartPoints1 = "";
                 let chartPoints2 = "";
                 let chartPointsNrOfDrivers = "";
-                // let oneRaceWidth = window.innerWidth / raceInfo.length;
-                let oneRaceWidth = (1140 / raceInfo.length) - 1;
+                let oneRaceWidth = (compareDisplay.offsetWidth / raceInfo.length);
                 let svgHeight = 160;
                 // --- markers arrays ---
                 let positionPoint1MarkerTab = [];
