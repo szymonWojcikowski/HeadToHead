@@ -63,7 +63,7 @@ xhttp.onreadystatechange = function() {
                 for (let j = 0; j < mostCompetitors; j++) {
                     drawResults(raceInfo[i].year, raceInfo[i].race, raceInfo[i].position[j], raceInfo[i].competitors[j]);
                 }
-                console.log("----------------");
+                console.log("%c----------------", "font-weight: 700;");
             }
         };
 
@@ -313,8 +313,8 @@ xhttp.onreadystatechange = function() {
             while (selectToClear.firstChild) {
                 selectToClear.removeChild(selectToClear.firstChild);
             }
-
-            addingSelects(truckersToCompare(), 1); //--wypełnienie SelectoToCompare kierowcami z tablicy avilableToCompare
+            //--- wypełnienie SelectoToCompare kierowcami z tablicy avilableToCompare ---
+            addingSelects(truckersToCompare(), 1); 
         };
 
         //--- deklaracja wyrażenia funkcyjnego czyszczącego kontener porównania ---
@@ -543,7 +543,7 @@ xhttp.onreadystatechange = function() {
         const compareBtn = document.getElementById("compareBtn");
         compareBtn.addEventListener("click", vs, false); 
     }
-};
+};// end of xhttp.onreadystatechange
 xhttp.open("GET", "db.json", true);
 xhttp.send();
 
