@@ -489,6 +489,41 @@
     "race": 1,
     "competitors": ["Atros", "BJ", "Cieślu", "Jaca", "Blaha", "Kamyk", "Sebanm", "Zozoleon", "Kubrick"],
     "position": ["1","2","3","4","5","6","7","8","9"]
+  },
+  {
+    "series": "LTTC",
+    "year": 2019,
+    "race": 2,
+    "competitors": ["Atros", "BJ", "Zozoleon", "Blaha", "Omen", "Cieślu", "Sebanm", "William", "Smyk", "Emilus", "Mechanik"],
+    "position": ["1","2","3","4","5","6","7","8","9", "10", "11"]
+  },
+  {
+    "series": "LTTC",
+    "year": 2019,
+    "race": 3,
+    "competitors": ["Atros", "BJ", "Kamyk", "Zozoleon", "Blaha", "Sebanm", "Konrad"],
+    "position": ["1","2","2","4","5","6","7"]
+  },
+  {
+    "series": "LTTC",
+    "year": 2019,
+    "race": 4,
+    "competitors": ["Atros", "Blaha", "Omen", "BJ", "Kamyk", "Sebanm", "Smyk", "Konrad"],
+    "position": ["1","2","3","4","5","6","7","8"]
+  },
+  {
+    "series": "LTTC",
+    "year": 2019,
+    "race": 5,
+    "competitors": ["Kamyk", "Zozoleon", "BJ", "Blaha", "Sebanm", "Cieślu", "Konrad", "Kubrick", "Mechanik"],
+    "position": ["1","2","3","4","5","6","7","8","9"]
+  },
+  {
+    "series": "LTTC",
+    "year": 2019,
+    "race": 6,
+    "competitors": ["BJ", "Kamyk", "Cieślu", "Sebanm", "Atros", "Zozoleon", "Blaha", "Smyk", "Kubrick"],
+    "position": ["1","2","3","4","4","6","7","8","9"]
   }
   ]
 }
